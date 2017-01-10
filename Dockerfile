@@ -4,38 +4,54 @@
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 1.0
 
-# FROM cloudfoundry/cflinuxfs 2
-FROM debian:jessie-backports
+FROM cloudfoundry/cflinuxfs2
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 
+# Add Mendix repository
 RUN apt-key adv --fetch-keys http://packages.mendix.com/mendix-debian-archive-key.asc
-RUN echo "deb http://packages.mendix.com/platform/debian/ jessie main" > /etc/apt/sources.list.d/mendix.list
+RUN echo "deb http://packages.mendix.com/platform/debian/ jessie main" > \
+    /etc/apt/sources.list.d/mendix.list
 
-RUN apt-get update && apt-get install -y --no-install-recommends m2ee-tools openjdk-8-jre-headless postgresql-client procps netcat && apt-get clean
+# Install m2ee tools, jre, postgres client and other utils
+RUN apt-get update && apt-get install -y --no-install-recommends m2ee-tools \
+    postgresql-client procps netcat && apt-get clean
 
-RUN mkdir -p /opt/mendix
+# Create tmp folder to store the output of compilation
+RUN mkdir -p /tmp
 
+# Create mendix user
 RUN useradd -ms /bin/bash mendix
 
-COPY start.sh /start.sh
-RUN setfacl -m u:mendix:x /start.sh
-# RUN chmod +x /start.sh
+# Give mendix user write access to the tmp folder
+RUN chown -R mendix /tmp
 
-COPY m2ee.experimental /usr/bin/m2ee
+# Login as mendix user
+# USER mendix
+# WORKDIR /home/mendix
 
-USER mendix
-WORKDIR /home/mendix
+# Default build-time variables
+ARG BUID_PATH=build
+ARG CACHE_PATH=cache
+ARG DATABASE_URL=postgres://mendix:mendix@127.0.0.1:5432/mendix
 
-RUN mkdir .m2ee data model runtimes web buildpack && cd data && mkdir database files model-upload log tmp
+# Checkout CF Build-pack here
+RUN mkdir buildpack && \
+  (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz \
+  | tar xvz -C buildpack --strip-components 1)
 
-COPY m2ee.yaml .m2ee/m2ee.yaml
+# Add the buildpack modules
+ENV PYTHONPATH "$PYTHONPATH:/buildpack/lib/"
 
-# Run CF Build-pack here
-RUN wget https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz | tar -v -C /home/mendix/buildpack -xz
+# Create the build destination
+RUN mkdir build cache
+COPY $BUID_PATH build/
+
+# Compile the application source code
+RUN ["buildpack/bin/compile", "/build/", "/cache/"]
 
 
-ENV MXDATA /home/mendix/data
+# Expose nginx port
+EXPOSE 80
 
-EXPOSE 9000
-
-ENTRYPOINT ["/start.sh"]
+# Start up application
+ENTRYPOINT ["python", "buildpack/start.py"]
