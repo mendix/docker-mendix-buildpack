@@ -15,7 +15,7 @@ build-image:
 	                 \"name\": \"mendix\", \
 	                 \"password\": \"mendix\", \
 	                 \"port\": \"5432\", \
-	                 \"uri\": \"postgres://mendix:mendix@127.0.0.1:5432/mendix\", \
+	                 \"uri\": \"postgres://mendix:mendix@172.17.0.2:5432/mendix\", \
 	                 \"user\": \"mendix\", \
 	                 \"username\": \"mendix\" \
 	          }, \
@@ -41,6 +41,7 @@ run-container:
 			 } \
 		 }" \
 		-e ADMIN_PASSWORD=Password1! \
+		-p 8080:80 \
 		mendix/mendix-buildpack:v1
 get-sample:
 	wget https://cdn.mendix.com/sample/SampleAppA.mpk -O downloads/application.mpk
