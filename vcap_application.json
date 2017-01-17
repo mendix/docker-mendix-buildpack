@@ -1,0 +1,9 @@
+{
+  "application_name": "docker_example",
+  "application_uris": [ "docker_example.com" ],
+   "limits": {
+     "disk": 1024,
+     "fds": 16384,
+     "mem": 1024
+   }
+}
