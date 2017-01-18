@@ -6,40 +6,9 @@ build-image:
 	docker build \
 	--build-arg BUID_PATH=build \
 	--build-arg CACHE_PATH=cache \
-	--build-arg VCAP_SERVICES="{ \
-	  \"PostgreSQL\": [ \
-	         { \
-	          \"credentials\": { \
-	                 \"host\": \"127.0.0.1\", \
-	                 \"hostname\": \"127.0.0.1\", \
-	                 \"name\": \"mendix\", \
-	                 \"password\": \"mendix\", \
-	                 \"port\": \"5432\", \
-	                 \"uri\": \"postgres://mendix:mendix@172.17.0.2:5432/mendix\", \
-	                 \"user\": \"mendix\", \
-	                 \"username\": \"mendix\" \
-	          }, \
-	          \"label\": \"postgresql\", \
-	          \"name\": \"mendix\", \
-	          \"plan\": \"100\", \
-	          \"provider\": \"core\", \
-	          \"syslog_drain_url\": null, \
-	          \"tags\": [] \
-	         } \
-		  ] \
-		 }" \
 	-t mendix/mendix-buildpack:v1 .
 run-container:
 	docker run -it \
-	  -e VCAP_APPLICATION="{ \
-			\"application_name\": \"docker_example\", \
-			\"application_uris\": [\"docker_example.com\"], \
-			 \"limits\": { \
-				\"disk\": 1024, \
-				\"fds\": 16384, \
-				\"mem\": 1024 \
-			 } \
-		 }" \
 		-e ADMIN_PASSWORD=Password1! \
 		-p 8080:80 \
 		mendix/mendix-buildpack:v1

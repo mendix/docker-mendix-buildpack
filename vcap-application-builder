@@ -1,0 +1,23 @@
+#!/usr/bin/env python
+import json
+import logging
+import os
+import subprocess
+import sys
+
+logging.basicConfig(
+    level=logging.INFO,
+    stream=sys.stdout,
+    format='%(levelname)s: %(message)s',
+)
+
+def build_vcap_application():
+    logging.debug("Executing build_vcap_application...")
+
+    vcap_application_data = open("vcap_application.json").read()
+
+    logging.debug("Set environment variable VCAP_APPLICATION: \n {0}".format(vcap_application_data))
+    print vcap_application_data
+
+if __name__ == '__main__':
+    build_vcap_application()

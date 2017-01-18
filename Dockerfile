@@ -11,9 +11,16 @@ MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 ARG BUID_PATH=build
 ARG CACHE_PATH=cache
 ARG VCAP_SERVICES
+ARG VCAP_APPLICATION
+
+# Copy the vcap-builder script (exports the VCAP variables)
+COPY vcap_services.json /tmp
+COPY vcap_application.json /tmp
+COPY vcap-services-builder /tmp
+WORKDIR /tmp
 
 # Checkout CF Build-pack here
-RUN mkdir -p buildpack/.local && \
+RUN export VCAP_SERVICES=$(./vcap-services-builder) && mkdir -p buildpack/.local && \
   (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz \
   | tar xvz -C buildpack --strip-components 1)
 
