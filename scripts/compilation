@@ -8,19 +8,20 @@ import sys
 # DATABASE_ENDPOINT = sys.argv[1]
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )
 
-def build_vcap_services():
+def export_vcap_services():
     logging.debug("Executing build_vcap_services...")
-
     vcap_services_data = open("vcap_services.json").read()
+    logging.info("Set environment variable VCAP_SERVICES: \n {0}".format(vcap_services_data))
+    os.environ['VCAP_SERVICES'] = vcap_services_data
 
-    logging.debug("Set environment variable VCAP_SERVICES: \n {0}".format(vcap_services_data))
-    result = json.dumps(vcap_services_data)
-    return result
+def call_builpack_compilation():
+    logging.debug("Executing call_builpack_compilation...")
+    subprocess.call(["/buildpack/bin/compile", "/build", "/cache"])
 
 if __name__ == '__main__':
 
@@ -28,9 +29,8 @@ if __name__ == '__main__':
     #    logging.error(
     #        'VCAP_SERVICES environment variable not found.'
     #    )
+    #    sys.exit(0)
 
-    vcap_services = build_vcap_services().replace("\\n", "")
-    vcap_services = vcap_services.replace("\"", "\\\"")
-    sys.stdout.write(vcap_services)
-    sys.stdout.flush()
+    export_vcap_services()
+    call_builpack_compilation()
     sys.exit(0)
