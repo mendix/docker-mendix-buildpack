@@ -7,9 +7,8 @@
 FROM cloudfoundry/cflinuxfs2
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 
-# Default build-time variables
-ARG BUID_PATH=build
-ARG CACHE_PATH=cache
+# Build-time variables
+ARG BUID_PATH
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
