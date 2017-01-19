@@ -24,12 +24,11 @@ ENV PYTHONPATH "/buildpack/lib/"
 
 # Create the build destination
 RUN mkdir build cache
-COPY $BUID_PATH build/
+COPY $BUID_PATH build
 
 # Compile the application source code
 WORKDIR /buildpack
-RUN "/buildpack/compilation"
-# RUN ["buildpack/bin/compile", "/build/", "/cache/"]
+RUN "/buildpack/compilation" /build /cache
 
 # Expose nginx port
 ENV PORT 80
@@ -39,4 +38,4 @@ EXPOSE $PORT
 COPY scripts /build
 WORKDIR /build
 RUN chmod u+x startup
-ENTRYPOINT ["/build/startup"]
+ENTRYPOINT ["/build/startup","/build/start.py"]

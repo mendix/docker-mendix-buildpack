@@ -5,31 +5,34 @@ import os
 import subprocess
 import sys
 
-# DATABASE_ENDPOINT = sys.argv[1]
+BUID_PATH = sys.argv[1]
+CACHE_PATH = sys.argv[2]
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )
 
 def export_vcap_services():
     logging.debug("Executing build_vcap_services...")
+
     vcap_services_data = open("vcap_services.json").read()
-    logging.info("Set environment variable VCAP_SERVICES: \n {0}".format(vcap_services_data))
-    os.environ['VCAP_SERVICES'] = vcap_services_data
+    vcap_services = json.loads(vcap_services_data)
+
+    vcap_services_str = json.dumps(vcap_services, sort_keys=True, indent=4,
+        separators=(',', ': '))
+    logging.debug("Set environment variable VCAP_SERVICES: \n {0}"
+        .format(vcap_services_str))
+
+    os.environ['VCAP_SERVICES'] = vcap_services_str
 
 def call_builpack_compilation():
     logging.debug("Executing call_builpack_compilation...")
-    subprocess.call(["/buildpack/bin/compile", "/build", "/cache"])
+    subprocess.call(["/buildpack/bin/compile", BUID_PATH, CACHE_PATH])
 
 if __name__ == '__main__':
-
-    #if os.getenv('DATABASE_ENDPOINT') is None:
-    #    logging.error(
-    #        'VCAP_SERVICES environment variable not found.'
-    #    )
-    #    sys.exit(0)
+    logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
     call_builpack_compilation()
