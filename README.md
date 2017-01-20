@@ -6,11 +6,11 @@ This project makes easy to deploy any Mendix app using [Docker](https://www.dock
 
 * Open a terminal in your OS
 * Navigate to the location where you want to checkout this project
-* Execute ```git clone git@github.com:mendix/docker-mendix-buildpack.git```
-* Execute ```cd docker-mendix-buildpack```
-* Execute ```make get-sample```
-* Execute ```make create-database```
-* Execute ```make build-image```
+* Clone this project ```git clone git@github.com:mendix/docker-mendix-buildpack.git```
+* Go to project folder ```cd docker-mendix-buildpack```
+* Download an example app ```make get-sample```
+* Start a database container ```make create-database```
+* Build the image ```make build-image```
 * List the database container: ```docker ps```
 * Find the database container name in the ```NAMES``` column
 * Check the IP of the database executing ```docker inspect DATABASE_CONTAINTER_NAME | grep IP```
@@ -33,6 +33,17 @@ Because internally the image uses [CF Mendix Buildpack](https://github.com/mendi
 * Configured [nginx](https://nginx.org/) as reverse proxy
 
 > In future releases we will support more features like the configuration of constants or the Java heap size. Please check the [CF Buildpack](https://github.com/mendix/cf-mendix-buildpack)
+
+## Installation
+
+In order to provide other Mendix app to the image, you must change the location of the app's source code (it must contain a file with *.mpr* extension) in the ```Makefile``` as follow:
+
+```
+build-image:
+	docker build \
+	--build-arg BUID_PATH=change_this_value \
+	-t mendix/mendix-buildpack:v1 .
+```
 
 ## Build Details
 
