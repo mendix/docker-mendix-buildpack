@@ -6,7 +6,7 @@ get-sample:
 	unzip downloads/application.mpk -d build/
 build-image:
 	docker build \
-	--build-arg BUID_PATH=build \
+	--build-arg BUILD_PATH=build \
 	-t mendix/mendix-buildpack:v1 .
 run-container:
 	docker-compose up

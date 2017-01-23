@@ -5,7 +5,7 @@ import os
 import subprocess
 import sys
 
-BUID_PATH = sys.argv[1]
+BUILD_PATH = sys.argv[1]
 CACHE_PATH = sys.argv[2]
 
 logging.basicConfig(
@@ -29,7 +29,7 @@ def export_vcap_services():
 
 def call_builpack_compilation():
     logging.debug("Executing call_builpack_compilation...")
-    subprocess.call(["/buildpack/bin/compile", BUID_PATH, CACHE_PATH])
+    subprocess.call(["/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
 
 if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
