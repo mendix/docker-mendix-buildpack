@@ -9,14 +9,10 @@ This project makes easy to deploy any Mendix app using [Docker](https://www.dock
 * Clone this project ```git clone git@github.com:mendix/docker-mendix-buildpack.git```
 * Go to project folder ```cd docker-mendix-buildpack```
 * Download an example app ```make get-sample```
-* Start a database container ```make create-database```
-* Build the image ```make build-image```
-* List the database container: ```docker ps```
-* Find the database container name in the ```NAMES``` column
-* Check the IP of the database executing ```docker inspect DATABASE_CONTAINTER_NAME | grep IP```
-* Update the *DATABASE_ENDPOINT* with the copied IP in the Makefile run-container target: ```DATABASE_ENDPOINT=postgres://mendix:mendix@127.0.0.1:5432/mendix```
+* Build ```make build-image```
 * Execute ```make run-container```
-* Type in your browser http://YOUR_DOCKER_HOST_IP:8080
+
+* Type in your browser http://localhost
 * **Congratulations, you made it!**
 
 ### Prerequisities
