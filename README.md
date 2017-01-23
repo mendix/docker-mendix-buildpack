@@ -12,7 +12,7 @@ This project makes easy to deploy any Mendix app using [Docker](https://www.dock
 * Build ```make build-image```
 * Execute ```make run-container```
 
-* Type in your browser http://localhost
+* Type in your browser http://localhost:8080
 * **Congratulations, you made it!**
 
 ### Prerequisities
