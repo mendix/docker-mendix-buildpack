@@ -18,6 +18,7 @@ This project makes easy to deploy any Mendix app using [Docker](https://www.dock
 ### Prerequisities
 
 * Docker (Installation [here](https://docs.docker.com/engine/installation/))
+* Make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
 ### Features
 
@@ -64,7 +65,7 @@ docker run -it \
 This was built with the following:
 
 * Atom 1.13.0
-* Docker version 1.12.5
+* Docker version 1.12.6
 
 ## Versioning
 
