@@ -27,12 +27,12 @@ def export_vcap_variables():
     logging.debug("Executing build_vcap_variables...")
 
     vcap_services = create_vcap_services()
-    logging.info("Set environment variable VCAP_SERVICES: \n {0}"
+    logging.debug("Set environment variable VCAP_SERVICES: \n {0}"
         .format(vcap_services))
     os.environ['VCAP_SERVICES'] = vcap_services
 
     vcap_application = create_vcap_application()
-    logging.info("Set environment variable VCAP_APPLICATION: \n {0}"
+    logging.debug("Set environment variable VCAP_APPLICATION: \n {0}"
         .format(vcap_application))
     os.environ['VCAP_APPLICATION'] = vcap_application
 
