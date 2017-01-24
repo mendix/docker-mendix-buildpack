@@ -90,7 +90,7 @@ def get_welcome_header():
 
 
 if __name__ == '__main__':
-    print get_welcome_header()
+    logging.info(get_welcome_header())
     export_vcap_variables()
     call_builpack_startup()
     sys.exit(0)
