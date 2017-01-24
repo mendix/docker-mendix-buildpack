@@ -8,7 +8,7 @@ FROM cloudfoundry/cflinuxfs2
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 
 # Build-time variables
-ARG BUID_PATH
+ARG BUILD_PATH
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
@@ -23,7 +23,7 @@ ENV PYTHONPATH "/buildpack/lib/"
 
 # Create the build destination
 RUN mkdir build cache
-COPY $BUID_PATH build
+COPY $BUILD_PATH build
 
 # Compile the application source code
 WORKDIR /buildpack

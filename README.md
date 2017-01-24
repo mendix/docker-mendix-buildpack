@@ -37,7 +37,7 @@ Because internally the image uses [CF Mendix Buildpack](https://github.com/mendi
 Before to run the container, it is necessary to build the image with your app as a result of the compilation. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the app's source code is located.
 
 ```
-docker build --build-arg BUID_PATH=change_this_value \
+docker build --build-arg BUILD_PATH=change_this_value \
 	-t mendix/mendix-buildpack:v1 .
 ```
 
