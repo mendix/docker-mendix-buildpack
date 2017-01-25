@@ -1,5 +1,7 @@
 # Docker Mendix Buildpack
 
+[![Build Status](https://travis-ci.org/mendix/docker-mendix-buildpack.svg?branch=master)](https://travis-ci.org/mendix/docker-mendix-buildpack)
+
 This project makes easy to deploy any Mendix app using [Docker](https://www.docker.com/) containers.
 
 ## Getting Started
