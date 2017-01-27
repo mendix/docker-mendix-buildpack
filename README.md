@@ -1,36 +1,36 @@
 # Docker Mendix Buildpack
 
+The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standard way to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
+
+## Code Status
+
 [![Build Status](https://travis-ci.org/mendix/docker-mendix-buildpack.svg?branch=master)](https://travis-ci.org/mendix/docker-mendix-buildpack)
 
-This project makes easy to deploy any Mendix app using [Docker](https://www.docker.com/) containers.
+## Try a sample mendix application
 
-## Getting Started
+1. open a terminal and run the following code
+```
+git clone git@github.com:mendix/docker-mendix-buildpack.git
+cd docker-mendix-buildpack
+make get-sample
+make build-image
+make run-container
+```
+1. open you browser http://localhost:8080
 
-* Open a terminal in your OS
-* Navigate to the location where you want to checkout this project
-* Clone this project ```git clone git@github.com:mendix/docker-mendix-buildpack.git```
-* Go to project folder ```cd docker-mendix-buildpack```
-* Download an example app ```make get-sample```
-* Build ```make build-image```
-* Execute ```make run-container```
-* Type in your browser http://localhost:8080
-* **Congratulations, you made it!**
+## Uses cases scenarios:
 
-### Prerequisities
+This project is goto reference for the following scenarios :
+
+1. Build and run a Mendix Application on your own docker set up
+1. Build your Docker Image of your Mendix application, push to a container repository and run it.
+
+## Getting started
+
+### Requirements
 
 * Docker (Installation [here](https://docs.docker.com/engine/installation/))
-* Make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
-
-### Features
-
-Because internally the image uses [CF Mendix Buildpack](https://github.com/mendix/cf-mendix-buildpack), we bring the following features:  
-
-* Compilation of the Mendix app in the image
-* Automatic generation of the ```m2ee.yaml```
-* Startup of the app when the container is spin up  
-* Configured [nginx](https://nginx.org/) as reverse proxy
-
-> In future releases we will support more features like the configuration of constants or the Java heap size. Please check the [CF Buildpack](https://github.com/mendix/cf-mendix-buildpack)
+* For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
 ## Installation
 
@@ -39,7 +39,7 @@ Because internally the image uses [CF Mendix Buildpack](https://github.com/mendi
 Before to run the container, it is necessary to build the image with your app as a result of the compilation. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the app's source code is located.
 
 ```
-docker build --build-arg BUILD_PATH=change_this_value \
+docker build --build-arg BUILD_PATH=<mendix-project-location> \
 	-t mendix/mendix-buildpack:v1 .
 ```
 
@@ -56,19 +56,39 @@ docker run -it \
   mendix/mendix-buildpack:v1  
 ```
 
-## Known limitations
 
-* The only database supported is **PostgreSQL**
-* It is not supported the change of constant default values
+## Features
 
-## Build Details
+This project uses the same base technology than Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack] Buildpack](https://github.com/mendix/cf-mendix-buildpack)).
+
+* Compilation of a Mendix application from project sources
+* Automatic generation of the configuration (_m2ee.yaml_)
+* Startup of the application when the container is spin up  
+* Configured [nginx](https://nginx.org/) as reverse proxy
+
+> future plan include configuration of constants or the Java heap size
+
+### Current limitations
+
+* **PostgreSQL** and **MYSQL** database supported
+* Application Constants are not supported
+* This setup will use a trial license for your application
+
+## Contributions
+
+Contributions are welcomed:
+1. open an issue about your topic
+1. fork, make a branch named starting with the issue number you are resolving (see [here](https://github.com/mendix/docker-mendix-buildpack/pulls?q=is%3Apr+is%3Aclosed)) and make a pull request to the master branch
+1. please add some tests for feature changes
+
+### Build Details
 
 This was built with the following:
 
 * Atom 1.13.0
 * Docker version 1.12.6
 
-## Versioning
+### Versioning
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/mendix/IBM-Watson-Connector-Kit/tags).
 
