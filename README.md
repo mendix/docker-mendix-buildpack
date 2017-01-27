@@ -16,6 +16,7 @@ make get-sample
 make build-image
 make run-container
 ```
+
 1. open you browser http://localhost:8080
 
 ## Uses cases scenarios:
@@ -56,7 +57,6 @@ docker run -it \
   mendix/mendix-buildpack:v1  
 ```
 
-
 ## Features
 
 This project uses the same base technology than Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack] Buildpack](https://github.com/mendix/cf-mendix-buildpack)).
@@ -66,17 +66,15 @@ This project uses the same base technology than Mendix uses to run application i
 * Startup of the application when the container is spin up  
 * Configured [nginx](https://nginx.org/) as reverse proxy
 
-> future plan include configuration of constants or the Java heap size
-
 ### Current limitations
 
-* **PostgreSQL** and **MYSQL** database supported
-* Application Constants are not supported
+* **PostgreSQL** database supported
 * This setup will use a trial license for your application
 
 ## Contributions
 
 Contributions are welcomed:
+
 1. open an issue about your topic
 1. fork, make a branch named starting with the issue number you are resolving (see [here](https://github.com/mendix/docker-mendix-buildpack/pulls?q=is%3Apr+is%3Aclosed)) and make a pull request to the master branch
 1. please add some tests for feature changes
