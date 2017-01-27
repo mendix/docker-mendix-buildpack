@@ -8,7 +8,7 @@ The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standar
 
 ## Try a sample mendix application
 
-1. open a terminal and run the following code
+Open a terminal and run the following code
 ```
 git clone git@github.com:mendix/docker-mendix-buildpack.git
 cd docker-mendix-buildpack
@@ -17,7 +17,7 @@ make build-image
 make run-container
 ```
 
-1. open you browser http://localhost:8080
+You can now open you browser http://localhost:8080
 
 ## Uses cases scenarios:
 
