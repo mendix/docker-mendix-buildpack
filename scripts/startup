@@ -18,6 +18,15 @@ def update_vcap_services(database_endpoint, vcap_services):
     if 'postgres' in database_endpoint:
         vcap_services['PostgreSQL'][0]['credentials']['uri'] = database_endpoint
         return vcap_services
+    if 'mysql' in database_endpoint:
+        vcap_services['MySQL'][0]['credentials']['uri'] = database_endpoint
+        return vcap_services
+    if 'db2' in database_endpoint:
+        vcap_services['Db2'][0]['credentials']['uri'] = database_endpoint
+        return vcap_services
+    if 'sqlserver' in database_endpoint:
+        vcap_services['SQLSERVER'][0]['credentials']['uri'] = database_endpoint
+        return vcap_services
 
     logging.error("Not supported database endpoint {0}"
         .format(database_endpoint))
