@@ -2,7 +2,7 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 1.0
+# Version: 1.1
 
 FROM cloudfoundry/cflinuxfs2
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
@@ -16,7 +16,7 @@ RUN mkdir -p buildpack/.local && \
   | tar xvz -C buildpack --strip-components 1)
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY scripts /buildpack
+COPY scripts/compilation /buildpack
 
 # Add the buildpack modules
 ENV PYTHONPATH "/buildpack/lib/"
@@ -34,7 +34,7 @@ ENV PORT 80
 EXPOSE $PORT
 
 # Start up application
-COPY scripts /build
+COPY scripts/ /build
 WORKDIR /build
 RUN chmod u+x startup
 ENTRYPOINT ["/build/startup","/build/start.py"]

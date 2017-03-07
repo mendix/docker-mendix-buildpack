@@ -8,29 +8,27 @@ import sys
 STARTUP_PATH = sys.argv[1]
 
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )
-
-def update_vcap_services(database_endpoint, vcap_services):
+def update_vcap_services(database_endpoint):
     logging.debug("Executing update_vcap_services...")
-    if 'postgres' in database_endpoint:
-        vcap_services['PostgreSQL'][0]['credentials']['uri'] = database_endpoint
-        return vcap_services
-    if 'mysql' in database_endpoint:
-        vcap_services['MySQL'][0]['credentials']['uri'] = database_endpoint
-        return vcap_services
-    if 'db2' in database_endpoint:
-        vcap_services['Db2'][0]['credentials']['uri'] = database_endpoint
-        return vcap_services
-    if 'sqlserver' in database_endpoint:
-        vcap_services['SQLSERVER'][0]['credentials']['uri'] = database_endpoint
-        return vcap_services
 
-    logging.error("Not supported database endpoint {0}"
-        .format(database_endpoint))
-    sys.exit(1)
+    vcap_services = dict()
+
+    if database_endpoint:
+        if 'postgres' in database_endpoint:
+            vcap_services['PostgreSQL'] = [{'credentials': { 'uri': database_endpoint } }]
+        if 'azure-sqldb' in vcap_services:
+            vcap_services['azure-sqldb'] = [{'credentials': { 'jdbcUrl': database_endpoint } }]
+
+    if not vcap_services:
+        logging.error("Not supported database endpoint {0}"
+            .format(database_endpoint))
+        sys.exit(1)
+
+    return vcap_services
 
 def export_vcap_variables():
     logging.debug("Executing build_vcap_variables...")
@@ -55,9 +53,7 @@ def create_vcap_services():
         )
         sys.exit(1)
 
-    vcap_services_data = open("vcap_services.json").read()
-    vcap_services = json.loads(vcap_services_data)
-    vcap_services = update_vcap_services(database_endpoint, vcap_services)
+    vcap_services = update_vcap_services(database_endpoint)
 
     vcap_services_str = json.dumps(vcap_services, sort_keys=True, indent=4,
         separators=(',', ': '))
