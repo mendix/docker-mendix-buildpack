@@ -33,6 +33,10 @@ RUN "/buildpack/compilation" /build /cache
 ENV PORT 80
 EXPOSE $PORT
 
+RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
+RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
+RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
+
 # Start up application
 COPY scripts /build
 WORKDIR /build
