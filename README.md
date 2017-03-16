@@ -33,7 +33,7 @@ This project is goto reference for the following scenarios :
 * Docker (Installation [here](https://docs.docker.com/engine/installation/))
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
-## Installation
+## Usage
 
 ### Compilation
 
@@ -103,6 +103,29 @@ docker run -it \
   -e LICENSE_KEY=<LICENSE_KEY> \
   mendix/mendix-buildpack:v1  
 ```
+
+### Configuring Custom Runtime Settings
+
+To configure any of the advanced Custom Runtime Settings you can use setting name prefixed with MXRUNTIME_ as an environment variable.
+
+For example, to configure the ConnectionPoolingMinIdle setting to value 10, you can set the following environment variable:
+
+example:
+```
+docker run -it \
+  -p 8080:80 \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e MXRUNTIME_ConnectionPoolingMinIdle 10 \
+  mendix/mendix-buildpack:v1  
+```
+
+If the setting contains a dot . you can use an underscore _ in the environment variable. So to set com.mendix.storage.s3.EndPoint to foo you can use:
+
+```
+MXRUNTIME_com_mendix_storage_s3_EndPoint foo
+```
+
 
 ## Contributions
 
