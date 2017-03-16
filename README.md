@@ -74,8 +74,8 @@ This project uses the same base technology than Mendix uses to run application i
 ### Enabling licensed
 
 If you wish to start your application with a non-trial license, please provide the additional environment variables
-* LICENSE_ID=<UUID>
-* LICENSE_KEY=<LICENSE_KEY>
+* LICENSE_ID
+* LICENSE_KEY
 
 example:
 ```
@@ -99,7 +99,7 @@ docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
   -e MX_Module_Constant=ABC123 \
-  -e LICENSE_ID=<LICENSE_ID> \
+  -e LICENSE_ID=<UUID> \
   -e LICENSE_KEY=<LICENSE_KEY> \
   mendix/mendix-buildpack:v1  
 ```
