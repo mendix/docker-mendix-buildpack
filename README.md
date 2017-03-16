@@ -59,7 +59,7 @@ docker run -it \
 
 ## Features
 
-This project uses the same base technology than Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack] Buildpack](https://github.com/mendix/cf-mendix-buildpack)).
+This project uses the same base technology than Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack](https://github.com/mendix/cf-mendix-buildpack)).
 
 * Compilation of a Mendix application from project sources
 * Automatic generation of the configuration (_m2ee.yaml_)
@@ -70,6 +70,39 @@ This project uses the same base technology than Mendix uses to run application i
 
 * **PostgreSQL** database supported
 * This setup will use a trial license for your application
+
+### Enabling licensed
+
+If you wish to start your application with a non-trial license, please provide the additional environment variables
+* LICENSE_ID=<UUID>
+* LICENSE_KEY=<LICENSE_KEY>
+
+example:
+```
+docker run -it \
+  -p 8080:80 \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e LICENSE_ID=<UUID> \
+  -e LICENSE_KEY=<LICENSE_KEY> \
+  mendix/mendix-buildpack:v1  
+```
+
+### Passing environment variables to your Mendix runtine
+
+The default values for constants will be used as defined in your project. However, you can override them with environment variables. You need to replace the dot with an underscore and prefix it with MX_. So a constant like Module.Constant with value ABC123 could be set like this:
+
+example:
+```
+docker run -it \
+  -p 8080:80 \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e MX_Module_Constant=ABC123 \
+  -e LICENSE_ID=<LICENSE_ID> \
+  -e LICENSE_KEY=<LICENSE_KEY> \
+  mendix/mendix-buildpack:v1  
+```
 
 ## Contributions
 
