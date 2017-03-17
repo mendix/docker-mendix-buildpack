@@ -8,5 +8,5 @@ build-image:
 	docker build \
 	--build-arg BUILD_PATH=build \
 	-t mendix/mendix-buildpack:v1 .
-run-container:
-	docker-compose up
+test-container:
+	cd tests && ./test-postgres.sh
