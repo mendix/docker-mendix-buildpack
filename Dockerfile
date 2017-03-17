@@ -12,7 +12,7 @@ ARG BUILD_PATH
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
-  (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz \
+  (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/v1.1.0.tar.gz \
   | tar xvz -C buildpack --strip-components 1)
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
@@ -32,6 +32,10 @@ RUN "/buildpack/compilation" /build /cache
 # Expose nginx port
 ENV PORT 80
 EXPOSE $PORT
+
+RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
+RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
+RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
 
 # Start up application
 COPY scripts /build
