@@ -126,6 +126,51 @@ If the setting contains a dot . you can use an underscore _ in the environment v
 MXRUNTIME_com_mendix_storage_s3_EndPoint foo
 ```
 
+### Configuring Enabled Scheduled Events
+
+The scheduled events can be configured using environment variable `SCHEDULED_EVENTS`.
+
+Possible values are `ALL`, `NONE` or a comma separated list of the scheduled events that you would like to enable. For example: `ModuleA.ScheduledEvent,ModuleB.OtherScheduledEvent`
+
+Example in a docker run command:
+
+```
+docker run -it \
+  -p 8080:80 \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e SCHEDULED_EVENTS=ALL \
+  mendix/mendix-buildpack:v1  
+```
+
+### Configuring App log levels
+
+Configuring log levels happens by adding one or more environment variables starting with the name `LOGGING_CONFIG` (the part of the name after that is not relevant and only used to distinguish between multiple entries if necessary). Its value should be valid JSON, in the format:
+
+    {
+      "LOGNODE": "LEVEL"
+    }
+
+You can see the available Log Nodes in your application in the Mendix Modeler. The level should be one of:
+ * `CRITICAL`
+ * `ERROR`
+ * `WARNING`
+ * `INFO`
+ * `DEBUG`
+ * `TRACE`
+
+
+Example:
+
+```
+docker run -it \
+  -p 8080:80 \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e LOGGING_CONFIG='{"Core": "DEBUG"}' \
+  mendix/mendix-buildpack:v1  
+```
+   
 
 ## Contributions
 
