@@ -8,7 +8,7 @@ import sys
 STARTUP_PATH = sys.argv[1]
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )

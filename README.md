@@ -180,7 +180,6 @@ docker run -it \
   mendix/mendix-buildpack:v1  
 ```
 
-
 ## Contributions
 
 Contributions are welcomed:

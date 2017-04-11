@@ -7,7 +7,7 @@ services:
           - db
         environment:
             - ADMIN_PASSWORD=Password1!
-            - DATABASE_ENDPOINT=jdbc:sqlserver://db:1433;database=mendix;user=mendix;password=Password1!
+            - DATABASE_ENDPOINT=jdbc:sqlserver://db:1433;database=mendix;user=sa;password=Password1!
         ports:
             - 8080:80
             - 8090:81
