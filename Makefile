@@ -8,5 +8,9 @@ build-image:
 	docker build \
 	--build-arg BUILD_PATH=build \
 	-t mendix/mendix-buildpack:v1 .
-run-container:
-	docker-compose up
+test-container:
+	tests/test-generic.sh tests/docker-compose-postgres.yml
+	tests/test-generic.sh tests/docker-compose-sqlserver.yml
+	tests/test-generic.sh tests/docker-compose-azuresql.yml
+run-test-container:
+	docker-compose -f tests/docker-compose-postgres.yml

@@ -1,0 +1,18 @@
+version: '2.1'
+
+services:
+    mendixapp:
+        image: mendix/mendix-buildpack:v1
+        depends_on:
+          - db
+        environment:
+            - ADMIN_PASSWORD=Password1!
+            - DATABASE_ENDPOINT=jdbc:sqlserver://db:1433;database=mendix;user=mendix;password=Password1!
+        ports:
+            - 8080:80
+            - 8090:81
+        links:
+            - db
+
+    db:
+        image: mendix/mendix_test_sqlserver:v1
