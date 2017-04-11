@@ -47,22 +47,22 @@ docker build --build-arg BUILD_PATH=<mendix-project-location> \
 ### Startup
 
 To start the container, it is required to provide the container with the password
-to create a administrative account **ADMIN_PASSWORD** and the **DATABASE_ENDPOINT**
-as you can see in the command below:
+to create a administrative account of your mendix application **ADMIN_PASSWORD**
+and the **DATABASE_ENDPOINT** as you can see in the example below:
 
 ```
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
-  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e DATABASE_ENDPOINT=postgres://username:password@host:port/mendix \
   mendix/mendix-buildpack:v1  
 ```
 
-or for microsoft SQL server
+or for Microsoft SQL server
 
 ```
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
-  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e DATABASE_ENDPOINT=sqlserver://username:password@host:port/mendix \
   mendix/mendix-buildpack:v1  
 ```
 
