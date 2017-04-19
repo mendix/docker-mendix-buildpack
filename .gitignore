@@ -90,3 +90,6 @@ ENV/
 
 # MacOS
 .DS_Store
+
+# dev docker compose
+NOCOMMIT-docker-compose.yml

@@ -37,7 +37,7 @@ This project is goto reference for the following scenarios :
 
 ### Compilation
 
-Before to run the container, it is necessary to build the image with your app as a result of the compilation. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the app's source code is located.
+Before running the container, it is necessary to build the image with your application. This build will also compile your application. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the application's source code is located (the root folder of your project mpk file).
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
@@ -47,13 +47,22 @@ docker build --build-arg BUILD_PATH=<mendix-project-location> \
 ### Startup
 
 To start the container, it is required to provide the container with the password
-to create a administrative account **ADMIN_PASSWORD** and the **DATABASE_ENDPOINT**
-as you can see in the command below:
+to create a administrative account of your mendix application **ADMIN_PASSWORD**
+and the **DATABASE_ENDPOINT** as you can see in the example below:
 
 ```
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
-  -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
+  -e DATABASE_ENDPOINT=postgres://username:password@host:port/mendix \
+  mendix/mendix-buildpack:v1  
+```
+
+or for Microsoft SQL server
+
+```
+docker run -it \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_ENDPOINT=sqlserver://username:password@host:port/mendix \
   mendix/mendix-buildpack:v1  
 ```
 
@@ -68,8 +77,8 @@ This project uses the same base technology than Mendix uses to run application i
 
 ### Current limitations
 
-* **PostgreSQL** database supported
-* This setup will use a trial license for your application
+* **PostgreSQL** and **SQLSERVER** database supported
+* This setup will use a trial license for your application by default
 
 ### Enabling licensed
 
@@ -143,7 +152,7 @@ docker run -it \
   mendix/mendix-buildpack:v1  
 ```
 
-### Configuring App log levels
+### Configuring Application log levels
 
 Configuring log levels happens by adding one or more environment variables starting with the name `LOGGING_CONFIG` (the part of the name after that is not relevant and only used to distinguish between multiple entries if necessary). Its value should be valid JSON, in the format:
 
@@ -170,7 +179,6 @@ docker run -it \
   -e LOGGING_CONFIG='{"Core": "DEBUG"}' \
   mendix/mendix-buildpack:v1  
 ```
-   
 
 ## Contributions
 
@@ -184,7 +192,6 @@ Contributions are welcomed:
 
 This was built with the following:
 
-* Atom 1.13.0
 * Docker version 1.12.6
 
 ### Versioning
