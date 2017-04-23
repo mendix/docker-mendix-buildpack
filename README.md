@@ -37,7 +37,7 @@ This project is goto reference for the following scenarios :
 
 ### Compilation
 
-Before running the container, it is necessary to build the image with your application. This build will also compile your application. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the application's source code is located (the root folder of your project mpk file).
+Before running the container, it is necessary to build the image with your application. This build will also compile your application. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the application model is located. It needs to point to the root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located.
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
