@@ -10,7 +10,7 @@ The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standar
 
 Open a terminal and run the following code
 ```
-git clone git@github.com:mendix/docker-mendix-buildpack.git
+git clone https://github.com/mendix/docker-mendix-buildpack
 cd docker-mendix-buildpack
 make get-sample
 make build-image
