@@ -9,6 +9,7 @@ The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standar
 ## Try a sample mendix application
 
 Open a terminal and run the following code
+
 ```
 git clone https://github.com/mendix/docker-mendix-buildpack
 cd docker-mendix-buildpack
@@ -17,7 +18,7 @@ make build-image
 make run-container
 ```
 
-You can now open you browser http://localhost:8080
+You can now open you browser [http://localhost:8080]([http://localhost:8080])
 
 ## Uses cases scenarios:
 
@@ -31,6 +32,7 @@ This project is goto reference for the following scenarios :
 ### Requirements
 
 * Docker (Installation [here](https://docs.docker.com/engine/installation/))
+* For preparing, a local installation of wget (for macOS)
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
 ## Usage
@@ -68,7 +70,7 @@ docker run -it \
 
 ## Features
 
-This project uses the same base technology than Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack](https://github.com/mendix/cf-mendix-buildpack)).
+This project uses the same base technology that Mendix uses to run application in Cloud Foundry (the [mendix cloudfoundry buildpack](https://github.com/mendix/cf-mendix-buildpack)).
 
 * Compilation of a Mendix application from project sources
 * Automatic generation of the configuration (_m2ee.yaml_)
@@ -83,10 +85,12 @@ This project uses the same base technology than Mendix uses to run application i
 ### Enabling licensed
 
 If you wish to start your application with a non-trial license, please provide the additional environment variables
+
 * LICENSE_ID
 * LICENSE_KEY
 
 example:
+
 ```
 docker run -it \
   -p 8080:80 \
@@ -102,6 +106,7 @@ docker run -it \
 The default values for constants will be used as defined in your project. However, you can override them with environment variables. You need to replace the dot with an underscore and prefix it with MX_. So a constant like Module.Constant with value ABC123 could be set like this:
 
 example:
+
 ```
 docker run -it \
   -p 8080:80 \
@@ -120,6 +125,7 @@ To configure any of the advanced Custom Runtime Settings you can use setting nam
 For example, to configure the ConnectionPoolingMinIdle setting to value 10, you can set the following environment variable:
 
 example:
+
 ```
 docker run -it \
   -p 8080:80 \
@@ -161,6 +167,7 @@ Configuring log levels happens by adding one or more environment variables start
     }
 
 You can see the available Log Nodes in your application in the Mendix Modeler. The level should be one of:
+
  * `CRITICAL`
  * `ERROR`
  * `WARNING`

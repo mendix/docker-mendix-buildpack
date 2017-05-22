@@ -2,8 +2,7 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 1.1
-
+# Version: 1.2
 FROM ubuntu:trusty
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 
@@ -32,7 +31,8 @@ COPY $BUILD_PATH build
 
 # Compile the application source code
 WORKDIR /buildpack
-RUN "/buildpack/compilation" /build /cache
+RUN "/buildpack/compilation" /build /cache && \
+  rm -fr /cache /tmp/javasdk /tmp/opt
 
 # Expose nginx port
 ENV PORT 80
