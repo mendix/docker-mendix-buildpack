@@ -23,4 +23,4 @@ get-sample-alt:
 build-image-alt:
 	docker build \
 	--build-arg BUILD_PATH=buildalt \
-	-t mendix/mendix-buildpack:v1 .
+	-t mendix/mendix-buildpack:v1-alt .
