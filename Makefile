@@ -13,7 +13,7 @@ test-container:
 	tests/test-generic.sh tests/docker-compose-azuresql.yml
 run-test-container:
 	docker-compose -f tests/docker-compose-postgres.yml
-# Build in alternative location
+# Build from alternative location
 get-sample-alt:
 	if [ -d buildalt ]; then rm -rf buildalt; fi
 	if [ -d downloads ]; then rm -rf downloads; fi
