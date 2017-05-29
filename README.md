@@ -43,7 +43,7 @@ Before running the container, it is necessary to build the image with your appli
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t mendix/mendix-buildpack:v1 .
+	-t mendix/mendix-buildpack:v1.2 .
 ```
 
 ### Startup
@@ -56,7 +56,7 @@ and the **DATABASE_ENDPOINT** as you can see in the example below:
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=postgres://username:password@host:port/mendix \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 or for Microsoft SQL server
@@ -65,7 +65,7 @@ or for Microsoft SQL server
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=sqlserver://username:password@host:port/mendix \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 ## Features
@@ -98,7 +98,7 @@ docker run -it \
   -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
   -e LICENSE_ID=<UUID> \
   -e LICENSE_KEY=<LICENSE_KEY> \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 ### Passing environment variables to your Mendix runtine
@@ -115,7 +115,7 @@ docker run -it \
   -e MX_Module_Constant=ABC123 \
   -e LICENSE_ID=<UUID> \
   -e LICENSE_KEY=<LICENSE_KEY> \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 ### Configuring Custom Runtime Settings
@@ -132,7 +132,7 @@ docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
   -e MXRUNTIME_ConnectionPoolingMinIdle 10 \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 If the setting contains a dot . you can use an underscore _ in the environment variable. So to set com.mendix.storage.s3.EndPoint to foo you can use:
@@ -155,7 +155,7 @@ docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
   -e SCHEDULED_EVENTS=ALL \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 ### Configuring Application log levels
@@ -184,7 +184,7 @@ docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=postgres://mendix:mendix@172.17.0.2:5432/mendix \
   -e LOGGING_CONFIG='{"Core": "DEBUG"}' \
-  mendix/mendix-buildpack:v1  
+  mendix/mendix-buildpack:v1.2  
 ```
 
 ## Contributions
