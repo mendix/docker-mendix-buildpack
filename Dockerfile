@@ -13,7 +13,7 @@ RUN apt-get -q -y update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget libgdiplus libpq5
 
 # Build-time variables
-ARG BUILD_PATH
+ARG BUILD_PATH=build
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
