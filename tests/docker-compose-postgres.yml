@@ -1,5 +1,5 @@
 mendixapp:
-    image: mendix/mendix-buildpack:v1
+    image: mendix/mendix-buildpack:v1.2
     environment:
         - ADMIN_PASSWORD=Password1!
         - DATABASE_ENDPOINT=postgres://mendix:mendix@db:5432/mendix
