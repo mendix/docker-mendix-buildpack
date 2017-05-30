@@ -15,6 +15,8 @@ run-test-container:
 	docker-compose -f tests/docker-compose-postgres.yml
 # Build from alternative location
 get-sample-alt:
+	# Also remove normal build directory
+	if [ -d build ]; then rm -rf build; fi
 	if [ -d buildalt ]; then rm -rf buildalt; fi
 	if [ -d downloads ]; then rm -rf downloads; fi
 	mkdir -p downloads buildalt
