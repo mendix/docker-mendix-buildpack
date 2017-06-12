@@ -82,9 +82,9 @@ This project uses the same base technology that Mendix uses to run application i
 * **PostgreSQL** and **SQLSERVER** database supported
 * This setup will use a trial license for your application by default
 
-### Enabling licensed
+### Enabling License
 
-If you wish to start your application with a non-trial license, please provide the additional environment variables
+If you wish to start your application with a non-trial license, please provide the additional environment variables:
 
 * LICENSE_ID
 * LICENSE_KEY
@@ -120,11 +120,11 @@ docker run -it \
 
 ### Configuring Custom Runtime Settings
 
-To configure any of the advanced Custom Runtime Settings you can use setting name prefixed with MXRUNTIME_ as an environment variable.
+To configure any of the advanced [Custom Runtime Settings](https://world.mendix.com/display/refguide6/Custom+Settings) you can use setting name prefixed with `MXRUNTIME_` as an environment variable.
 
 For example, to configure the ConnectionPoolingMinIdle setting to value 10, you can set the following environment variable:
 
-example:
+Example:
 
 ```
 docker run -it \
