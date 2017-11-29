@@ -68,15 +68,15 @@ def create_vcap_application():
 
 def export_k8s_instance():
     logging.debug("Checking Kubernetes environment...")
-    kubernetes_host = os.environ['KUBERNETES_SERVICE_HOST']
+    kubernetes_host = os.environ.get('KUBERNETES_SERVICE_HOST')
     if kubernetes_host is not None:
-        hostname = os.environ['HOSTNAME']
+        hostname = os.environ.get('HOSTNAME')
         instance_match = re.search('(?<=-)[0-9]+$', hostname)
         if instance_match is not None:
             instance_number = instance_match.group(0)
             logging.info("Setting CF_INSTANCE_INDEX to {0} based on hostname {1}"
                 .format(instance_number, hostname))
-            os.environ['CF_INSTANCE_INDEX'] = instance_number 
+            os.environ['CF_INSTANCE_INDEX'] = instance_number
 
 def call_builpack_startup():
     logging.debug("Executing call_builpack_startup...")
