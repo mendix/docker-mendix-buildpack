@@ -186,6 +186,9 @@ docker run -it \
   -e LOGGING_CONFIG='{"Core": "DEBUG"}' \
   mendix/mendix-buildpack:v1.2  
 ```
+### Monitoring the runtime
+
+The admin interface can be used to measure the health of the Runtime as per [documentation](https://docs.mendix.com/refguide/monitoring-mendix-runtime). The password of the admin port can be set using the environment variable M2EE_PASSWORD. The standard username is MxAdmin. The interface is exposed to the outside world on the url /_mxadmin/ and can be accessed by using basic HTTP authentication. Refer to the [documentation](https://docs.mendix.com/refguide/monitoring-mendix-runtime) to learn how to use this interface.
 
 ## Contributions
 
