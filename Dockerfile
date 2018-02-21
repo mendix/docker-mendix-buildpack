@@ -2,7 +2,7 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 1.3
+# Version: 1.4
 FROM ubuntu:trusty
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 

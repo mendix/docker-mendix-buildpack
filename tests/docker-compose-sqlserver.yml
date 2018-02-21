@@ -1,5 +1,5 @@
 mendixapp:
-    image: mendix/mendix-buildpack:v1.3
+    image: mendix/mendix-buildpack:v1.4
     healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost"]
             interval: 15s
