@@ -203,8 +203,9 @@ healthcheck:
             timeout: 3s
 ```
 
-The health check monitors the status of the Mendix container, but it does not autoheal or restart the container in case of unhealthy status. For further information the official documentation [here](https://docs.docker.com/engine/reference/builder/#healthcheck).
+The health check monitors the status of the Mendix container, but it does not autoheal or restart the container in case of unhealthy status, realing on the Docker runtime to perform the aforementioned task. For instance, Kubernetes is in charge to restart the unhealthy containers, but reporting their status it is a responsability of the containers themselves. For a Kubernetes example, please follow this [link](https://github.com/mendix/kubernetes-howto/blob/master/mendix-app.yaml).
 
+For further information, the official documentation [here](https://docs.docker.com/engine/reference/builder/#healthcheck).
 
 ## Contributions
 
