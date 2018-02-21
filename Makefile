@@ -8,7 +8,7 @@ get-sample:
 build-image:
 	docker build \
 	--build-arg BUILD_PATH=build \
-	-t mendix/mendix-buildpack:v1.2 .
+	-t mendix/mendix-buildpack:v1.3 .
 
 test-container:
 	tests/test-generic.sh tests/docker-compose-postgres.yml

@@ -1,5 +1,5 @@
 mendixapp:
-    image: mendix/mendix-buildpack:v1.3
+    image: mendix/kubernetessample:v1
     healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost"]
             interval: 15s
@@ -8,7 +8,7 @@ mendixapp:
             timeout: 3s
     environment:
         - ADMIN_PASSWORD=Password1!
-        - DATABASE_ENDPOINT=sqlserver://sa:Password1!@db:1433/mendix
+        - DATABASE_ENDPOINT=postgres://mendix:mendix@db:5432/mendix
     ports:
         - 8080:80
         - 8090:81
@@ -16,4 +16,7 @@ mendixapp:
         - db
 
 db:
-    image: mendix/mendix_test_sqlserver:v1
+    image: postgres
+    environment:
+        - POSTGRES_USER=mendix
+        - POSTGRES_PASSWORD=mendix

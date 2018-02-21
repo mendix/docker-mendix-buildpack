@@ -2,14 +2,17 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 1.2
+# Version: 1.3
 FROM ubuntu:trusty
 MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
 
 #Install Python & wget
 RUN apt-get -q -y update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget libgdiplus libpq5
+  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5
+# RUN apk update && \
+#     apk add --no-cache python2 curl openjdk8 postgresql-client && \
+#     apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
 # Build-time variables
 ARG BUILD_PATH=project
