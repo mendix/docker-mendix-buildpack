@@ -190,6 +190,22 @@ docker run -it \
 
 The admin interface can be used to measure the health of the Runtime as per [documentation](https://docs.mendix.com/refguide/monitoring-mendix-runtime). The password of the admin port can be set using the environment variable M2EE_PASSWORD. The standard username is MxAdmin. The interface is exposed to the outside world on the url /_mxadmin/ and can be accessed by using basic HTTP authentication. Refer to the [documentation](https://docs.mendix.com/refguide/monitoring-mendix-runtime) to learn how to use this interface.
 
+### Health check
+
+The docker compose files, in the ```/test``` folder, contain an example how to perform a healtcheck on a Mendix app:
+
+```
+healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost"]
+            interval: 15s
+            retries: 2
+            start_period: 10s
+            timeout: 3s
+```
+
+The health check monitors the status of the Mendix container, but it does not autoheal or restart the container in case of unhealthy status. For further information the official documentation [here](https://docs.docker.com/engine/reference/builder/#healthcheck).
+
+
 ## Contributions
 
 Contributions are welcomed:
