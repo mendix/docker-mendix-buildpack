@@ -118,6 +118,25 @@ docker run -it \
   mendix/mendix-buildpack:v1.2  
 ```
 
+Two ways to pass multi-line environment variable:
+1. Command line - when **docker run** executed, it's possible to pass multi-line value with double quotes 
+```
+docker run -it \
+  -e CERTIFICATE_AUTHORITIES="-----BEGIN CERTIFICATE-----
+                MIIGejCCBGKgAwIBAgIJANuKwREDEb4sMA0GCSqGSIb3DQEBCwUAMIGEMQswCQYD
+                VQQGEwJOTDEVMBMGA1UECBMMWnVpZC1Ib2xsYW5kMRIwEAYDVQQHEwlSb3R0ZXJk
+                YW0xDzANBgNVBAoTBk1lbmRpeDEXMBUGA1UEAxMOTWVuZGl4IENBIC0gRzIxIDAe..."
+```
+2. Docker-compose - special prefix can be used
+```
+environment:
+    CERTIFICATE_AUTHORITIES: |-
+                -----BEGIN CERTIFICATE-----
+                MIIGejCCBGKgAwIBAgIJANuKwREDEb4sM....
+```
+
+Requested a test scenario from Jouke and Xiwen, meanwhile will update docker-buildpack documentation.
+
 ### Configuring Custom Runtime Settings
 
 To configure any of the advanced [Custom Runtime Settings](https://world.mendix.com/display/refguide6/Custom+Settings) you can use setting name prefixed with `MXRUNTIME_` as an environment variable.
