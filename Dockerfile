@@ -19,8 +19,8 @@ ARG BUILD_PATH=project
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
-  (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/v1.7.3.tar.gz \
-  | tar xvz -C buildpack --strip-components 1)
+   (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/v1.9.1.tar.gz \
+   | tar xvz -C buildpack --strip-components 1)
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation /buildpack
@@ -49,4 +49,4 @@ RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/
 COPY scripts/ /build
 WORKDIR /build
 RUN chmod u+x startup
-ENTRYPOINT ["/build/startup","/build/start.py"]
+ENTRYPOINT ["/build/startup","/buildpack/start.py"]

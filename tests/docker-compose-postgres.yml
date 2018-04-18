@@ -2,7 +2,7 @@ version: '2.3'
 
 services:
     mendixapp:
-        image: mendix/mendix-buildpack:v1.4
+        image: mendix/mendix-buildpack:v1.3
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost"]
             interval: 15s
@@ -10,15 +10,80 @@ services:
             start_period: 10s
             timeout: 3s
         environment:
-            - ADMIN_PASSWORD=Password1!
-            - DATABASE_ENDPOINT=postgres://mendix:mendix@db:5432/mendix
+            ADMIN_PASSWORD: Password1!
+            DATABASE_ENDPOINT: postgres://mendix:mendix@db:5432/mendix
+            # - MXRUNTIME_License_SubscriptionSecret=tuudRzchqLlPqKDJNuU4bQb71sJSbVnNPo285TxI
+            # - MXRUNTIME_License_UseLicenseServer=true
+            CERTIFICATE_AUTHORITIES: |-
+                -----BEGIN CERTIFICATE-----
+                MIIGejCCBGKgAwIBAgIJANuKwREDEb4sMA0GCSqGSIb3DQEBCwUAMIGEMQswCQYD
+                VQQGEwJOTDEVMBMGA1UECBMMWnVpZC1Ib2xsYW5kMRIwEAYDVQQHEwlSb3R0ZXJk
+                YW0xDzANBgNVBAoTBk1lbmRpeDEXMBUGA1UEAxMOTWVuZGl4IENBIC0gRzIxIDAe
+                BgkqhkiG9w0BCQEWEWRldm9wc0BtZW5kaXgubmV0MB4XDTE0MDYwNDExNTk0OFoX
+                DTI0MDYwMTExNTk0OFowgYQxCzAJBgNVBAYTAk5MMRUwEwYDVQQIEwxadWlkLUhv
+                bGxhbmQxEjAQBgNVBAcTCVJvdHRlcmRhbTEPMA0GA1UEChMGTWVuZGl4MRcwFQYD
+                VQQDEw5NZW5kaXggQ0EgLSBHMjEgMB4GCSqGSIb3DQEJARYRZGV2b3BzQG1lbmRp
+                eC5uZXQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDOvHfcr3krTGWO
+                JMLKoXG90ASLRn7Y98KNdU3tqc2kvGApLCfI/RZueMMQnbnCCnBKTg4ImJ41uvwy
+                +PA6f7DdTeb0/ptH8iAQlZTr3T20LN3frgimSq8FsiKOFETGWF4sddPf5ehEPm8b
+                Tt8r7dzD65drQX4lvdGBj/VdrrY+/1jyHT7RWxXlDief2n8mai9OykfKKtyeR9Y9
+                TT5HSrFuoraUrvWWNIIe90Gva4mlEPXInjxCndV0QsBexNP6qt+6B4E8TTsfn5JG
+                f4JP+oPQpoLfBfvZvO9OsH4fN2R4/bs//nH+03dhetdzoaB4r+nhwcN3OxOVe9hf
+                znggfR3V6y9Ozgay1Hm8MbwEODnG6ZViwT3OIijGJz9tduYIu3q2oOJOT/qc1zd3
+                V5FdWJnUdf4FPU7CiGlhQ0o+AE/LRUfQ2GyoF8PHZJSVn+IuZ0CYe+qA/c+Ma699
+                h8x1arp2snGO69PvyqJcEadQn2dGS0X/VlylyPFaGtxdKwu0xECF0Wr9RLMCwMG1
+                qCSB3goak2TDMuFQjr7fidL0Pi1+Egc8bSP1osvWrAQ0hPxIzq7qszc09zCPEAde
+                CZ8iZvhA7/lal829SdgYddW1IbgmcMJdRcKScqywKlfV6JEZ0if11Bo1CoWeLdYK
+                JkaEAXUAntl4X2o94kefWDfWefuWqwIDAQABo4HsMIHpMB0GA1UdDgQWBBS7qycc
+                13oiq07I71jBESr9TrhjBTCBuQYDVR0jBIGxMIGugBS7qycc13oiq07I71jBESr9
+                TrhjBaGBiqSBhzCBhDELMAkGA1UEBhMCTkwxFTATBgNVBAgTDFp1aWQtSG9sbGFu
+                ZDESMBAGA1UEBxMJUm90dGVyZGFtMQ8wDQYDVQQKEwZNZW5kaXgxFzAVBgNVBAMT
+                Dk1lbmRpeCBDQSAtIEcyMSAwHgYJKoZIhvcNAQkBFhFkZXZvcHNAbWVuZGl4Lm5l
+                dIIJANuKwREDEb4sMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQELBQADggIBAMNd
+                uSondHxXo+VQBZylf5XPZ4RY333YrCggU4tQbEgqyrhKg4JHprAZq5sP4Q59guw1
+                SULcQ7iU+6lDND2T/txtkwsReXWU0zcnORQvTj51J6NK1K5o2kyCK6nMppsz40CJ
+                VBTg7ZMsed43Uu72QahORvLyxesazNQ5FDTLafU5u3aZTcI+NKclA+T/QakcS7gA
+                SV0ke2JTL1HZi03E4d3/E4LEiF8AQa19lf5IE+6pkgxrD12MjkPjtgzFaFIbZSbl
+                A/iQt2hO7bdJG9zN8uZImqyCDNNm1anF2JXY51lZrwgaVuEwkfRxywcYl89of/jM
+                F19VGm/XhdS4ydLDh93qwbpm5A3biFDA8Y9N2EmyMUe6TlliQP9uJan3w/MUPGeS
+                +Px9toSFOxGhO5uwIh7Y4rDBUz/ztdwbpSjKzjPfjQSBd+QCaqj+7iDEEM0cKNdC
+                Ku/8it/StyhJoQTiy1vhSP+mX5sIgYViLgpZHkmnidrZaf8OJ+KgrDIMNN6XLG9s
+                oktDgPUIDVtICucFESeV76gRfENKtIkhQLTJtYaNt8rD5xUgMhq21fRO+I6ZwKQm
+                3nhMc8cHtDalBzanb/kzCkIsfb2ajj2/05ar+nHVvn6O299NIi341FORVdMeamPI
+                nfTP0v2yROaWNeMwWTROgSYJrXqO+yvCYKMYigj4
+                -----END CERTIFICATE-----
+                -----BEGIN CERTIFICATE-----
+                MIIEcTCCA1mgAwIBAgIJANUE5069bkdvMA0GCSqGSIb3DQEBBAUAMIGBMQswCQYD
+                VQQGEwJOTDEVMBMGA1UECBMMWnVpZC1Ib2xsYW5kMRIwEAYDVQQHEwlSb3R0ZXJk
+                YW0xEjAQBgNVBAoTCU1lbmRpeCBCVjESMBAGA1UEAxMJTWVuZGl4IENBMR8wHQYJ
+                KoZIhvcNAQkBFhBiZWhlZXJAbWVuZGl4Lm5sMB4XDTA1MTEzMDA5MjY1NFoXDTE1
+                MTEyODA5MjY1NFowgYExCzAJBgNVBAYTAk5MMRUwEwYDVQQIEwxadWlkLUhvbGxh
+                bmQxEjAQBgNVBAcTCVJvdHRlcmRhbTESMBAGA1UEChMJTWVuZGl4IEJWMRIwEAYD
+                VQQDEwlNZW5kaXggQ0ExHzAdBgkqhkiG9w0BCQEWEGJlaGVlckBtZW5kaXgubmww
+                ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCizJkE35dyDUpz2GgZzVdZ
+                Rlf/eA9Xe48hx3WFe2sLGO42ngb71qSQutDxfYStCjT17/25JH5URLfTX/9L4WFe
+                INj6uX+Lt8W1ODtgVJ+HvgoJH76etpcXggOLsX8GFXhAdZWiwZ7S3rlVJiaVJWSc
+                VrZZkzXwK9Y/la4HjGHGVyd52doYBXb3uMJt9Fl1daT7cz11WTTlUiQEHfkRfROZ
+                KXN0o7JtBZqwrHsKaloYPfoW/9SlmrlAe4WJV1+WsdPpxzjfI730lpBgaY6XsLHT
+                3I+l/BYHJZx+8jBUFhi+0Aj9TX2Xx3Ran7dmB5dezCyLzcgpM31WE3gid+ELzdFd
+                AgMBAAGjgekwgeYwHQYDVR0OBBYEFMZSioCtznEB4WO1S/c7x+4VI2YWMIG2BgNV
+                HSMEga4wgauAFMZSioCtznEB4WO1S/c7x+4VI2YWoYGHpIGEMIGBMQswCQYDVQQG
+                EwJOTDEVMBMGA1UECBMMWnVpZC1Ib2xsYW5kMRIwEAYDVQQHEwlSb3R0ZXJkYW0x
+                EjAQBgNVBAoTCU1lbmRpeCBCVjESMBAGA1UEAxMJTWVuZGl4IENBMR8wHQYJKoZI
+                hvcNAQkBFhBiZWhlZXJAbWVuZGlzxcssggkA1QTnTr1uR28wDAYDVR0TBAUwAwEB
+                /zANBgkqhkiG9w0BAQQFAAOCAQEAKdXKdTLlCPfn4vkJzTg+ukD2CSQysTx+24+P
+                4BSUKZ+lOHBmhsKia1Zs+upvbHZ7605x2cdpppEiKC+aVQJJZ2X3BrZZq25oYdDg
+                Z1LiFonMl7o4oOjVXhVix4T/WbxuGZTLxpdPHJA+SGw7yaA5Fh0uT70bjTeIfVS6
+                cTYdfWO9rsrhiSYt4YeCarDCnjO93vxInvog3ydjJB69luTUXXoniaEnFEXPSqqN
+                EVSQHw0FN1bNvaA6/zXvdb7E2oFKIYiPylsdeQ6DPgBxht/YMZRlI8p3F2SiEbbe
+                yW7wMeYCUfgTNWaSaJd6uYUjj+IP/9+YOkp5pLW5eEAq6YscYA==
+                -----END CERTIFICATE-----
         ports:
             - 8080:80
             - 8090:81
         links:
             - db
-        restart: always
-
+        # restart: always
     db:
         image: postgres
         healthcheck:

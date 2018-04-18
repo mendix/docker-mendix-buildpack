@@ -6,7 +6,7 @@ get-sample:
 	unzip downloads/application.mpk -d build/
 
 build-image:
-	docker build \
+	docker build --no-cache \
 	--build-arg BUILD_PATH=build \
 	-t mendix/mendix-buildpack:v1.3 .
 
