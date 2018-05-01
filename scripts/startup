@@ -69,10 +69,9 @@ def create_vcap_application():
     vcap_application_name = os.environ['VCAP_APPLICATION_NAME']
     if vcap_application_name is None:
         vcap_application_data = open("vcap_application.json").read()
-        return vcap_application_data
     else:
-        vcap_application_gen = json.dumps({'application_name': vcap_application_name, 'application_uris': 'docker_example.com'})
-        return vcap_application_gen
+        vcap_application_data = json.dumps({'application_name': vcap_application_name, 'application_uris': 'docker_example.com'})
+    return vcap_application_gen
     
 def export_k8s_instance():
     logging.debug("Checking Kubernetes environment...")
