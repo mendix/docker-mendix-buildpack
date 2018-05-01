@@ -4,7 +4,8 @@
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 1.4
 FROM ubuntu:trusty
-MAINTAINER Mendix Digital Ecosystems <digitalecosystems@mendix.com>
+LABEL Author="Mendix Digital Ecosystems"
+LABEL maintainer="digitalecosystems@mendix.com"
 
 #Install Python & wget
 RUN apt-get -q -y update && \
