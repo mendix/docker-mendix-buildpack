@@ -1,0 +1,29 @@
+version: '2.3'
+
+services:
+    mendixapp:
+        image: mendix/mendix-buildpack:v1.3
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost"]
+            interval: 15s
+            retries: 2
+            start_period: 10s
+            timeout: 3s
+        environment:
+            ADMIN_PASSWORD: Password1!
+            DATABASE_ENDPOINT: mysql://mendix:mendix@db:3306/mendix
+        ports:
+            - 8080:80
+            - 8090:81
+        links:
+            - db
+        # restart: always
+    db:
+        image: mysql:5.7
+        environment:
+            - MYSQL_USER=mendix
+            - MYSQL_PASSWORD=mendix
+            - MYSQL_DATABASE=mendix
+            - MYSQL_ROOT_PASSWORD=root
+        ports:
+            - 3306:3306

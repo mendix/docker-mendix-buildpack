@@ -6,7 +6,7 @@ get-sample:
 	unzip downloads/application.mpk -d build/
 
 build-image:
-	docker build --no-cache \
+	docker build \
 	--build-arg BUILD_PATH=build \
 	-t mendix/mendix-buildpack:v1.3 .
 
@@ -16,4 +16,4 @@ test-container:
 	tests/test-generic.sh tests/docker-compose-azuresql.yml
 
 run-container:
-	docker-compose -f tests/docker-compose-postgres.yml up
+	docker-compose -f tests/docker-compose-mysql.yml up
