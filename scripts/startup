@@ -70,7 +70,7 @@ def create_vcap_application():
     if vcap_application_name is None:
         vcap_application_data = open("vcap_application.json").read()
     else:
-        vcap_application_data = json.dumps({'application_name': vcap_application_name, 'application_uris': 'docker_example.com'})
+        vcap_application_data = json.dumps({'application_name': vcap_application_name, 'application_uris': '[ 'vcap_application_name' ] })
     return vcap_application_data
     
 def export_k8s_instance():
