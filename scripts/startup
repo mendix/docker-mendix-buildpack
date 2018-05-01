@@ -21,6 +21,8 @@ def update_vcap_services(database_endpoint):
     if database_endpoint:
         if 'postgres' in database_endpoint:
             vcap_services['PostgreSQL'] = [{'credentials': { 'uri': database_endpoint } }]
+        if 'mysql' in database_endpoint:
+            vcap_services['p.mysql'] = [{'credentials': { 'uri': database_endpoint } }]
         if 'sqlserver' in database_endpoint:
             # Without DATABASE_URL env var, cf-mendix-buildpack supports sqlserver as azure-sqldb
             vcap_services['azure-sqldb'] = [{'credentials': { 'jdbcUrl': database_endpoint } }]
