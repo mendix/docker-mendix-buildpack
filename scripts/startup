@@ -66,12 +66,7 @@ def create_vcap_services():
 
 def create_vcap_application():
     logging.debug("Executing create_vcap_application...")
-    vcap_application_name = os.environ['VCAP_APPLICATION_NAME']
-    if vcap_application_name is None:
-        vcap_application_data = open("vcap_application.json").read()
-    else:
-        vcap_application_data = json.dumps({'application_name': vcap_application_name, 'application_uris': [ vcap_application_name ] })
-    return vcap_application_data
+    vcap_application_data = open("vcap_application.json").read()
             
 def export_k8s_instance():
     logging.debug("Checking Kubernetes environment...")
@@ -84,7 +79,6 @@ def export_k8s_instance():
             logging.info("Setting CF_INSTANCE_INDEX to {0} based on hostname {1}"
                 .format(instance_number, hostname))
             os.environ['CF_INSTANCE_INDEX'] = instance_number
-            os.environ['DD_TAGS'] = hostname
             
 def export_encoded_cacertificates():
     logging.debug("Checking for encoded CA certificates...")
@@ -124,8 +118,9 @@ def get_welcome_header():
 
 if __name__ == '__main__':
     logging.info(get_welcome_header())
-    export_k8s_instance()
     export_vcap_variables()
+    export_k8s_instance()
+    
     export_encoded_cacertificates()
     call_builpack_startup()
     sys.exit(0)
