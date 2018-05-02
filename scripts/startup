@@ -67,7 +67,8 @@ def create_vcap_services():
 def create_vcap_application():
     logging.debug("Executing create_vcap_application...")
     vcap_application_data = open("vcap_application.json").read()
-            
+    return vcap_application_data
+    
 def export_k8s_instance():
     logging.debug("Checking Kubernetes environment...")
     kubernetes_host = os.environ.get('KUBERNETES_SERVICE_HOST')
