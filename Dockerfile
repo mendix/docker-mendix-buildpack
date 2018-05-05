@@ -3,17 +3,9 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 1.4
-ARG ROOTFS=mendix/rootfs
-FROM $ROOTFS
-ARG ROOTFS
+FROM mendix/rootfs
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
-
-# When doing a full build: install dependencies & remove package lists
-RUN [ "$ROOTFS" != "mendix/rootfs" ] || apt-get -q -y update || : && \
-  [ "$ROOTFS" != "mendix/rootfs" ] || DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y || : && \
-  [ "$ROOTFS" != "mendix/rootfs" ] || DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5 || : && \
-  [ "$ROOTFS" != "mendix/rootfs" ] || rm -rf /var/lib/apt/lists/* || :
 
 # Build-time variables
 ARG BUILD_PATH=project
