@@ -3,7 +3,7 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 1.4
-FROM ubuntu:trusty
+FROM ubuntu:latest
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
@@ -11,16 +11,13 @@ LABEL maintainer="digitalecosystems@mendix.com"
 RUN apt-get -q -y update && \
   DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
   DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5
-# RUN apk update && \
-#     apk add --no-cache python2 curl openjdk8 postgresql-client && \
-#     apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
 
 # Build-time variables
 ARG BUILD_PATH=project
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
-   (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/v1.9.1.tar.gz \
+   (wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz \
    | tar xvz -C buildpack --strip-components 1)
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
