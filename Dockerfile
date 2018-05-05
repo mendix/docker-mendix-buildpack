@@ -3,14 +3,17 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 1.4
-FROM mendix/rootfs
+ARG rootfs=mendix/rootfs
+FROM $rootfs
+ARG rootfs
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
-#Install Python & wget
-#RUN apt-get -q -y update && \
-#  DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
-#  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5
+# When doing a full build: install dependencies & remove package lists
+RUN test "$rootfs!=mendix/rootfs" || apt-get -q -y update && \
+  DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5 && \
+  rm -rf /var/lib/apt/lists/* || :
 
 # Build-time variables
 ARG BUILD_PATH=project
