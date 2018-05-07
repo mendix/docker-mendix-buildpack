@@ -9,11 +9,8 @@ LABEL maintainer="digitalecosystems@mendix.com"
 
 #Install Python & wget
 RUN apt-get -q -y update && \
-  DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5
-# RUN apk update && \
-#     apk add --no-cache python2 curl openjdk8 postgresql-client && \
-#     apk add libgdiplus --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/
+  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y python wget curl libgdiplus libpq5 && \
+  rm -rf /var/lib/apt/lists/*
 
 # Build-time variables
 ARG BUILD_PATH=project
@@ -36,7 +33,7 @@ COPY $BUILD_PATH build
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
 RUN "/buildpack/compilation" /build /cache && \
-  rm -fr /cache /tmp/javasdk /tmp/opt
+  rm -fr /cache /tmp/javasdk /tmp/opt /build/.local/usr/lib/jvm/jre-* /usr/share/doc/*
 
 # Expose nginx port
 ENV PORT 80
