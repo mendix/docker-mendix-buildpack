@@ -226,6 +226,15 @@ The health check monitors the status of the Mendix container, but it does not au
 
 For further information, the official documentation [here](https://docs.docker.com/engine/reference/builder/#healthcheck).
 
+### Advanced feature: full-build
+
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/MXClyde/mx-docker-rootfs/blob/master/Dockerfile) Dockerfile. If you want to build the root-fs yourself you can use the Dockerfile.full file. For example by specifing it as a parameter:
+
+```
+docker build --build-arg BUILD_PATH=<mendix-project-location> \
+	-t mendix/mendix-buildpack:v1.2 -f Dockerfile.full .
+```
+
 ## Contributions
 
 Contributions are welcomed:
