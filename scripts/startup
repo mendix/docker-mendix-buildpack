@@ -80,6 +80,15 @@ def export_k8s_instance():
                 .format(instance_number, hostname))
             os.environ['CF_INSTANCE_INDEX'] = instance_number
 
+def export_dd_hostname():
+    logging.debug("Checking if Datadog is enabled...")
+    dd_api_key = os.environ.get('DD_API_KEY')
+    if dd_api_key is not None:
+        dd_hostname = os.environ.get('DD_HOSTNAME')
+        if dd_hostname is None:
+            hostname = os.environ.get('HOSTNAME')
+            os.environ['DD_HOSTNAME'] = os.environ.get('HOSTNAME')
+            
 def call_builpack_startup():
     logging.debug("Executing call_builpack_startup...")
     subprocess.call(["python", STARTUP_PATH])
@@ -113,5 +122,6 @@ if __name__ == '__main__':
     logging.info(get_welcome_header())
     export_vcap_variables()
     export_k8s_instance()
+    export_dd_hostname()
     call_builpack_startup()
     sys.exit(0)
