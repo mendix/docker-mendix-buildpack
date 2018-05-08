@@ -28,7 +28,7 @@ COPY $BUILD_PATH build
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
 RUN "/buildpack/compilation" /build /cache && \
-  rm -fr /cache /tmp/javasdk /build/.local/usr/lib/jvm/jdk-* /usr/share/doc/*
+  rm -fr /cache /tmp/javasdk /build/.local/usr/lib/jvm/jdk-* /usr/share/doc/* /tmp/opt/mono-*
 
 # Expose nginx port
 ENV PORT 80
