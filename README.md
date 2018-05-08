@@ -226,6 +226,24 @@ The health check monitors the status of the Mendix container, but it does not au
 
 For further information, the official documentation [here](https://docs.docker.com/engine/reference/builder/#healthcheck).
 
+### Certificate Managment
+
+
+Certificate Authorities (CAs) can be managed using the CERTIFICATE_AUTHORITY environment variable, see the upstream [Cloud Foundry Build Pack documentation](https://github.com/mendix/cf-mendix-buildpack#certificate-management). 
+
+In case your environment does not support multi-line environment variables, a Base64-encoded string containing the desired CA Certificates can be used alternatively. 
+
+This string should be set into the CERTIFICATE_AUTHORITY_BASE64 environment variable.
+
+### Advanced feature: full-build
+
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/MXClyde/mx-docker-rootfs/blob/master/Dockerfile) Dockerfile. If you want to build the root-fs yourself you can use the Dockerfile.full file. For example by specifing it as a parameter:
+
+```
+docker build --build-arg BUILD_PATH=<mendix-project-location> \
+	-t mendix/mendix-buildpack:v1.2 -f Dockerfile.full .
+```
+
 ## Contributions
 
 Contributions are welcomed:
