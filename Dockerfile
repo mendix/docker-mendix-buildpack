@@ -9,7 +9,7 @@ LABEL maintainer="digitalecosystems@mendix.com"
 
 #Install Python & wget
 RUN apt-get -q -y update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -q -y python wget curl libgdiplus libpq5 && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -q -y python wget curl libgdiplus libpq5 && \
   rm -rf /var/lib/apt/lists/*
 
 # Build-time variables
