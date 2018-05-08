@@ -229,11 +229,11 @@ For further information, the official documentation [here](https://docs.docker.c
 ### Certificate Managment
 
 
-Certificate Authorities (CAs) can be managed using the CERTIFICATE_AUTHORITY environment variable, see the upstream [Cloud Foundry Build Pack documentation](https://github.com/mendix/cf-mendix-buildpack#certificate-management). 
+Certificate Authorities (CAs) can be managed using the CERTIFICATE_AUTHORITIES environment variable, see the upstream [Cloud Foundry Build Pack documentation](https://github.com/mendix/cf-mendix-buildpack#certificate-management). 
 
 In case your environment does not support multi-line environment variables, a Base64-encoded string containing the desired CA Certificates can be used alternatively. 
 
-This string should be set into the CERTIFICATE_AUTHORITY_BASE64 environment variable.
+This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment variable.
 
 ### Advanced feature: full-build
 
