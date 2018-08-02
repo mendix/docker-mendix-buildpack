@@ -9,6 +9,7 @@ LABEL maintainer="digitalecosystems@mendix.com"
 
 # Build-time variables
 ARG BUILD_PATH=project
+ARG BLOBSTORE
 
 # Checkout CF Build-pack here
 RUN mkdir -p buildpack/.local && \
