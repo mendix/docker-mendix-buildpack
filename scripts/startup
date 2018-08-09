@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import json
 import logging
 import os
@@ -90,7 +90,7 @@ def export_encoded_cacertificates():
             
 def call_builpack_startup():
     logging.debug("Executing call_builpack_startup...")
-    subprocess.call(["python", STARTUP_PATH])
+    subprocess.call(["python3", STARTUP_PATH])
 
 def get_welcome_header():
     welcome_ascii_header = '''
