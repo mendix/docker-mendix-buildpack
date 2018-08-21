@@ -86,7 +86,8 @@ def export_encoded_cacertificates():
     certificate_authorities_base64 = os.environ.get('CERTIFICATE_AUTHORITIES_BASE64')
     if certificate_authorities_base64 is not None:
         logging.info("Decoding encoded CA certificates into CERTIFICATE_AUTHORITIES environment variable")
-        os.environ['CERTIFICATE_AUTHORITIES'] = str(base64.b64decode(certificate_authorities_base64))
+        certificate_authorities = base64.b64decode(certificate_authorities_base64)
+        os.environ['CERTIFICATE_AUTHORITIES'] = str(certificate_authorities,'utf-8')
             
 def call_builpack_startup():
     logging.debug("Executing call_builpack_startup...")
