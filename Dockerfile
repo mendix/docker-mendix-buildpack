@@ -7,6 +7,9 @@ FROM mendix/rootfs
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
+# Run as nobody
+USER nobody
+
 # Build-time variables
 ARG BUILD_PATH=project
 ARG DD_API_KEY
