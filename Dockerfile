@@ -48,6 +48,6 @@ COPY scripts/ /build
 WORKDIR /build
 RUN chmod u+x startup
 # Prepare to run as mendix
-RUN chown -R mendix.mendix /buildpack /build /.java /root
-USER mendix
+RUN chown -R 999:999 /buildpack /build /.java /root
+USER 999
 ENTRYPOINT ["/build/startup","/buildpack/start.py"]
