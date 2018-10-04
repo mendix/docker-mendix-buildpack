@@ -7,8 +7,9 @@ FROM mendix/rootfs
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
-# Run as nobody
-USER nobody
+# Create mendix user
+RUN groupadd -g 999 mendix && \
+    useradd -r -d /root -u 999 -g mendix mendix
 
 # Build-time variables
 ARG BUILD_PATH=project
@@ -35,7 +36,7 @@ RUN "/buildpack/compilation" /build /cache && \
   rm -fr /cache /tmp/javasdk /tmp/opt
 
 # Expose nginx port
-ENV PORT 80
+ENV PORT 8080
 EXPOSE $PORT
 
 RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
@@ -46,4 +47,7 @@ RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/
 COPY scripts/ /build
 WORKDIR /build
 RUN chmod u+x startup
+# Prepare to run as mendix
+RUN chown -R mendix.mendix /buildpack /build /.java /root
+USER mendix
 ENTRYPOINT ["/build/startup","/buildpack/start.py"]
