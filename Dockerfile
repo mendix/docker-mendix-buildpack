@@ -28,6 +28,7 @@ COPY $BUILD_PATH build
 
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
+RUN chmod +x /buildpack/compilation
 RUN "/buildpack/compilation" /build /cache && \
   rm -fr /cache /tmp/javasdk /tmp/opt
 
