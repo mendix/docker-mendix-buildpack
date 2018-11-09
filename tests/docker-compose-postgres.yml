@@ -87,7 +87,7 @@ services:
     db:
         image: postgres
         healthcheck:
-            test: ["CMD", "pg_isready", "-U", "postgres"]
+            test: ["CMD", "pg_isready", "-U", "mendix"]
             interval: 5s
             retries: 10
             start_period: 10s
