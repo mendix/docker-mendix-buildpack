@@ -13,8 +13,7 @@ services:
             ADMIN_PASSWORD: Password1!
             DATABASE_ENDPOINT: mysql://mendix:mendix@db:3306/mendix
         ports:
-            - 8080:80
-            - 8090:81
+            - 8080:8080
         links:
             - db
         # restart: always
