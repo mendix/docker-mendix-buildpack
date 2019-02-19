@@ -79,7 +79,8 @@ services:
                 yW7wMeYCUfgTNWaSaJd6uYUjj+IP/9+YOkp5pLW5eEAq6YscYA==
                 -----END CERTIFICATE-----
         ports:
-            - 8080:8080
+            - 8080:80
+            - 8090:81
         links:
             - db
         # restart: always
