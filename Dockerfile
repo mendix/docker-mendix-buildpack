@@ -17,7 +17,7 @@ RUN mkdir -p buildpack/.local && \
    | tar xvz -C buildpack --strip-components 1)
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY scripts/compilation /buildpack
+COPY scripts/compilation /buildpack 
 
 # Add the buildpack modules
 ENV PYTHONPATH "/buildpack/lib/"
@@ -28,14 +28,14 @@ COPY $BUILD_PATH build
 
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
-RUN chmod +x /buildpack/compilation
-RUN "/buildpack/compilation" /build /cache && \
-  rm -fr /cache /tmp/javasdk /tmp/opt
+RUN "/buildpack/compilation" /build /cache &&\
+    rm -fr /cache /tmp/javasdk /tmp/opt
 
 # Expose nginx port
-ENV PORT 80
+ENV PORT 8080
 EXPOSE $PORT
 
+# Create directories required by buildpack
 RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
 RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
 RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
@@ -43,5 +43,14 @@ RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/
 # Start up application
 COPY scripts/ /build
 WORKDIR /build
-RUN chmod u+x startup
+
+ARG USER_NAME=mendix
+
+# Prepare for start
+RUN useradd -r -d /root ${USER_NAME} &&\
+    chown -R ${USER_NAME} /buildpack /build /.java /root &&\
+    chmod u+x startup
+
+USER ${USER_NAME}
+
 ENTRYPOINT ["/build/startup","/buildpack/start.py"]
