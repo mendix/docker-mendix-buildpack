@@ -31,23 +31,19 @@ RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
 RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
 RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
 
-ARG USER_NAME=mendix
-
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
 RUN "/buildpack/compilation" /build /cache &&\
     rm -fr /cache /tmp/javasdk /tmp/opt &&\
-    useradd -r -d /root ${USER_NAME} &&\
-    chown -R ${USER_NAME} /buildpack /build /.java /root 
-    # chmod u+x startup
+    useradd -r -U -d /root mendix &&\
+    chown -R mendix /buildpack /build /.java /root 
 
 # Copy start scripts
-COPY scripts/startup /build
-COPY scripts/vcap_application.json /build
-RUN chown ${USER_NAME} /build/startup /build/vcap_application.json
+COPY --chown=mendix:mendix scripts/startup /build
+COPY --chown=mendix:mendix scripts/vcap_application.json /build
 WORKDIR /build
 
-USER ${USER_NAME}
+USER mendix
 
 # Expose nginx port
 ENV PORT 8080
