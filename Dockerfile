@@ -26,19 +26,15 @@ ENV PYTHONPATH "/buildpack/lib/"
 RUN mkdir build cache
 COPY $BUILD_PATH build
 
-# Compile the application source code and remove temp files
-WORKDIR /buildpack
-RUN "/buildpack/compilation" /build /cache &&\
-    rm -fr /cache /tmp/javasdk /tmp/opt
-
-# Expose nginx port
-ENV PORT 8080
-EXPOSE $PORT
-
 # Create directories required by buildpack
 RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
 RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
 RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
+
+# Compile the application source code and remove temp files
+WORKDIR /buildpack
+RUN "/buildpack/compilation" /build /cache &&\
+    rm -fr /cache /tmp/javasdk /tmp/opt
 
 # Start up application
 COPY scripts/ /build
@@ -52,5 +48,9 @@ RUN useradd -r -d /root ${USER_NAME} &&\
     chmod u+x startup
 
 USER ${USER_NAME}
+
+# Expose nginx port
+ENV PORT 8080
+EXPOSE $PORT
 
 ENTRYPOINT ["/build/startup","/buildpack/start.py"]
