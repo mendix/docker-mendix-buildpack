@@ -31,21 +31,21 @@ RUN mkdir -p "/.java/.userPrefs/com/mendix/core"
 RUN mkdir -p "/root/.java/.userPrefs/com/mendix/core"
 RUN ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml"
 
+ARG USER_NAME=mendix
+
 # Compile the application source code and remove temp files
 WORKDIR /buildpack
 RUN "/buildpack/compilation" /build /cache &&\
-    rm -fr /cache /tmp/javasdk /tmp/opt
+    rm -fr /cache /tmp/javasdk /tmp/opt &&\
+    useradd -r -d /root ${USER_NAME} &&\
+    chown -R ${USER_NAME} /buildpack /build /.java /root 
+    # chmod u+x startup
 
-# Start up application
-COPY scripts/ /build
+# Copy start scripts
+COPY scripts/startup /build
+COPY scripts/vcap_application.json /build
+RUN chown ${USER_NAME} /build/startup /build/vcap_application.json
 WORKDIR /build
-
-ARG USER_NAME=mendix
-
-# Prepare for start
-RUN useradd -r -d /root ${USER_NAME} &&\
-    chown -R ${USER_NAME} /buildpack /build /.java /root &&\
-    chmod u+x startup
 
 USER ${USER_NAME}
 
