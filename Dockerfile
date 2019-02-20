@@ -2,7 +2,7 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 1.8.0
+# Version: 2.0.0
 FROM mendix/rootfs
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
@@ -10,6 +10,8 @@ LABEL maintainer="digitalecosystems@mendix.com"
 # Build-time variables
 ARG BUILD_PATH=project
 ARG DD_API_KEY
+# CF buildpack version
+ARG CF_BUILDPACK=master
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -19,7 +21,8 @@ ARG DD_API_KEY
 RUN mkdir -p buildpack build cache \
    "/.java/.userPrefs/com/mendix/core" "/root/.java/.userPrefs/com/mendix/core" &&\
    ln -s "/.java/.userPrefs/com/mendix/core/prefs.xml" "/root/.java/.userPrefs/com/mendix/core/prefs.xml" &&\
-   wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/master.tar.gz | tar xvz -C buildpack --strip-components 1
+   echo "CF Buildpack version ${CF_BUILDPACK}" &&\
+   wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xvz -C buildpack --strip-components 1
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation /buildpack 
