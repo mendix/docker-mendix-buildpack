@@ -1,17 +1,17 @@
 # Docker Mendix Buildpack
 
-The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standard way to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
-
-## Code Status
-
 [![Build Status](https://travis-ci.org/mendix/docker-mendix-buildpack.svg?branch=master)](https://travis-ci.org/mendix/docker-mendix-buildpack)
+
+The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standard way to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
 ## Try a sample mendix application
 
-Open a terminal and run the following code
+Open a terminal and run the following code:
+
+> Important note: always provide `<TAG>` value to guarantee consistent builds.
 
 ```
-git clone https://github.com/mendix/docker-mendix-buildpack
+git clone --branch <TAG> https://github.com/mendix/docker-mendix-buildpack
 cd docker-mendix-buildpack
 make get-sample
 make build-image
@@ -25,7 +25,7 @@ You can now open you browser [http://localhost:8080]([http://localhost:8080])
 This project is goto reference for the following scenarios :
 
 1. Build and run a Mendix Application on your own docker set up
-1. Build your Docker Image of your Mendix application, push to a container repository and run it.
+2. Build your Docker Image of your Mendix application, push to a container repository and run it.
 
 ## Getting started
 
