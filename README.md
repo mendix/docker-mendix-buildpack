@@ -39,12 +39,19 @@ This project is goto reference for the following scenarios :
 
 ### Compilation
 
-Before running the container, it is necessary to build the image with your application. This build will also compile your application. Therefore, when you will build the Docker image you need to provide the **BUILD_PATH** parameter which indicates where the application model is located. It needs to point to the root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located.
+Before running the container, it is necessary to build the image with your application. This buildpack contains Dockerfile with script that will compile your application using [cf-mendix-buildpack](https://github.com/mendix/cf-mendix-buildpack/).
 
 ```
-docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t mendix/mendix-buildpack:v1.2 .
+docker build 
+  --build-arg BUILD_PATH=<mendix-project-location> \
+  --build-arg CF_BUILDPACK=<cf-buildpack-version> \
+  --tag mendix/mendix-buildpack:v1.2 .
 ```
+
+For build you can provide nex arguments:
+
+- **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defalts to `./project`.
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines it's recommended to use fixed version.
 
 ### Startup
 
@@ -241,11 +248,20 @@ This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment va
 
 ### Advanced feature: full-build
 
-To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/MXClyde/mx-docker-rootfs/blob/master/Dockerfile) Dockerfile. If you want to build the root-fs yourself you can use the Dockerfile.full file. For example by specifing it as a parameter:
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs) Dockerfile. If you want to build the root-fs yourself you can use the following script:
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t mendix/mendix-buildpack:v1.2 -f Dockerfile.full .
+	-t <root-fs-image-tag> -f Dockerfile.rootfs .
+```
+
+After that you can build the target image with next command:
+
+```
+docker build 
+  --build-arg BUILD_PATH=<mendix-project-location> \
+  --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
+	-t mendix/mendix-buildpack:v1.2 .
 ```
 
 ## Contributions
@@ -253,8 +269,8 @@ docker build --build-arg BUILD_PATH=<mendix-project-location> \
 Contributions are welcomed:
 
 1. open an issue about your topic
-1. fork, make a branch named starting with the issue number you are resolving (see [here](https://github.com/mendix/docker-mendix-buildpack/pulls?q=is%3Apr+is%3Aclosed)) and make a pull request to the master branch
-1. please add some tests for feature changes
+2. fork, make a branch named starting with the issue number you are resolving (see [here](https://github.com/mendix/docker-mendix-buildpack/pulls?q=is%3Apr+is%3Aclosed)) and make a pull request to the master branch
+3. please add some tests for feature changes
 
 ### Build Details
 
