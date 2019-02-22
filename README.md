@@ -8,7 +8,7 @@ The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standar
 
 Open a terminal and run the following code:
 
-> Important note: always provide `<TAG>` value to guarantee consistent builds.
+> Important note: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
 
 ```
 git clone --branch <TAG> https://github.com/mendix/docker-mendix-buildpack
