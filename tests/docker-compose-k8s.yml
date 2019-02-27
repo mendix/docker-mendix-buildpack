@@ -10,7 +10,8 @@ mendixapp:
         - ADMIN_PASSWORD=Password1!
         - DATABASE_ENDPOINT=postgres://mendix:mendix@db:5432/mendix
     ports:
-        - 8080:8080
+        - 8080:80
+        - 8090:81
     links:
         - db
 
