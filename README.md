@@ -48,7 +48,7 @@ docker build
   --tag mendix/mendix-buildpack:v1.2 .
 ```
 
-For build you can provide nex arguments:
+For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defalts to `./project`.
 - **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines it's recommended to use fixed version.
