@@ -2,6 +2,7 @@
 import json
 import logging
 import os
+import pwd
 import re
 import subprocess
 import sys
@@ -89,9 +90,19 @@ def export_encoded_cacertificates():
         certificate_authorities = base64.b64decode(certificate_authorities_base64)
         os.environ['CERTIFICATE_AUTHORITIES'] = str(certificate_authorities,'utf-8')
             
-def call_builpack_startup():
-    logging.debug("Executing call_builpack_startup...")
-    subprocess.call(["python3", STARTUP_PATH])
+def call_buildpack_startup():
+    logging.debug("Executing call_buildpack_startup...")
+    subprocess.call(["python3", STARTUP_PATH], cwd='/opt/mendix/build')
+
+def add_uid():
+    try:
+        pwd.getpwuid(os.getuid())
+    except KeyError:
+        logging.info("Adding uid to /etc/passwd")
+        with open('/etc/passwd', 'r' ) as f:
+            passwd = f.read()
+        passwd = re.sub('^(mendix:x):(\d+:\d+):(.*)$', '\\1:{uid}:{gid}:\\3'.format(uid=os.getuid(), gid=os.getgid()), passwd, flags = re.M)
+        open('/etc/passwd','w').writelines(passwd)
 
 def get_welcome_header():
     welcome_ascii_header = '''
@@ -124,5 +135,6 @@ if __name__ == '__main__':
     export_k8s_instance()
     
     export_encoded_cacertificates()
-    call_builpack_startup()
+    add_uid()
+    call_buildpack_startup()
     sys.exit(0)
