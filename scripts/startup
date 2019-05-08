@@ -5,6 +5,7 @@ import os
 import pwd
 import re
 import subprocess
+import signal
 import sys
 import base64
 
@@ -104,6 +105,15 @@ def add_uid():
         passwd = re.sub('^(mendix:x):(\d+:\d+):(.*)$', '\\1:{uid}:{gid}:\\3'.format(uid=os.getuid(), gid=os.getgid()), passwd, flags = re.M)
         open('/etc/passwd','w').writelines(passwd)
 
+def setup_signal_handlers():
+    def sigchld_handler(_signo, _stack_frame):
+        # reap zombies
+        logging.debug("Child process has exited, getting result")
+        (waitpid, result) = os.waitpid(-1, os.WNOHANG)
+        logging.debug("Child process %s has exited with result %s" % (waitpid, result))
+    
+    signal.signal(signal.SIGCHLD, sigchld_handler)
+
 def get_welcome_header():
     welcome_ascii_header = '''
                               ##        .
@@ -136,5 +146,6 @@ if __name__ == '__main__':
     
     export_encoded_cacertificates()
     add_uid()
+    setup_signal_handlers()
     call_buildpack_startup()
     sys.exit(0)
