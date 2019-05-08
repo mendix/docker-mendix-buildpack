@@ -42,12 +42,14 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 # 1. Create cache directory
 # 2. Call compilation script
 # 3. Remove temporary folders
-# 4. Update ownership of /opt/mendix so that the app can run as a non-root user
-# 5. Update permissions for /opt/mendix/build so that the app can run as a non-root user
+# 4. Create symlink for java prefs used by CF buildpack
+# 5. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 6. Update permissions for /opt/mendix/build so that the app can run as a non-root user
 WORKDIR /opt/mendix/buildpack
 RUN mkdir -p /tmp/buildcache &&\
     "/opt/mendix/buildpack/compilation" /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt &&\
+    ln -s /opt/mendix/.java /opt/mendix/build &&\
     chown -R mendix:root /opt/mendix &&\
     chmod -R g+rwX /opt/mendix
 
