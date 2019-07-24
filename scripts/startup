@@ -16,42 +16,8 @@ logging.basicConfig(
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )
-def update_vcap_services(database_endpoint):
-    logging.debug("Executing update_vcap_services...")
 
-    vcap_services = dict()
-
-    if database_endpoint:
-        if 'postgres' in database_endpoint:
-            vcap_services['PostgreSQL'] = [{'credentials': { 'uri': database_endpoint } }]
-        if 'mysql' in database_endpoint:
-            vcap_services['p.mysql'] = [{'credentials': { 'uri': database_endpoint } }]
-        if 'sqlserver' in database_endpoint:
-            # Without DATABASE_URL env var, cf-mendix-buildpack supports sqlserver as azure-sqldb
-            vcap_services['azure-sqldb'] = [{'credentials': { 'jdbcUrl': database_endpoint } }]
-
-    if not vcap_services:
-        logging.error("Not supported database endpoint {0}"
-            .format(database_endpoint))
-        sys.exit(1)
-
-    return vcap_services
-
-def export_vcap_variables():
-    logging.debug("Executing build_vcap_variables...")
-
-    vcap_services = create_vcap_services()
-    logging.debug("Set environment variable VCAP_SERVICES: \n {0}"
-        .format(vcap_services))
-    os.environ['VCAP_SERVICES'] = vcap_services
-
-    vcap_application = create_vcap_application()
-    logging.debug("Set environment variable VCAP_APPLICATION: \n {0}"
-        .format(vcap_application))
-    os.environ['VCAP_APPLICATION'] = vcap_application
-
-def create_vcap_services():
-    logging.debug("Executing create_vcap_services...")
+def export_db_endpoint():
     database_endpoint = os.environ['DATABASE_ENDPOINT']
     if database_endpoint is None:
         logging.error(
@@ -60,11 +26,15 @@ def create_vcap_services():
         )
         sys.exit(1)
 
-    vcap_services = update_vcap_services(database_endpoint)
+    os.environ['DATABASE_URL'] = database_endpoint
 
-    vcap_services_str = json.dumps(vcap_services, sort_keys=True, indent=4,
-        separators=(',', ': '))
-    return vcap_services_str
+def export_vcap_variables():
+    logging.debug("Executing build_vcap_variables...")
+
+    vcap_application = create_vcap_application()
+    logging.debug("Set environment variable VCAP_APPLICATION: \n {0}"
+        .format(vcap_application))
+    os.environ['VCAP_APPLICATION'] = vcap_application
 
 def create_vcap_application():
     logging.debug("Executing create_vcap_application...")
@@ -150,6 +120,7 @@ def get_welcome_header():
 
 if __name__ == '__main__':
     logging.info(get_welcome_header())
+    export_db_endpoint()
     export_vcap_variables()
     export_k8s_instance()
     
