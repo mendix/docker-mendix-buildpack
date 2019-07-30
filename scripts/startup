@@ -18,15 +18,14 @@ logging.basicConfig(
 )
 
 def export_db_endpoint():
-    database_endpoint = os.environ['DATABASE_ENDPOINT']
-    if database_endpoint is None:
-        logging.error(
+    if 'DATABASE_ENDPOINT' in os.environ:
+        os.environ['DATABASE_URL'] = os.environ['DATABASE_ENDPOINT']
+    else:
+        if 'DATABASE_URL' not in os.environ:
+            logging.warning(
             'DATABASE_ENDPOINT environment variable not found.'
-            'The database uri is required in order to startup the container.'
-        )
-        sys.exit(1)
-
-    os.environ['DATABASE_URL'] = database_endpoint
+            'Fallback to custom runtime variables https://github.com/mendix/cf-mendix-buildpack/#configuring-custom-runtime-settings')
+            
 
 def export_vcap_variables():
     logging.debug("Executing build_vcap_variables...")
