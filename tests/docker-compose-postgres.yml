@@ -2,7 +2,7 @@ version: '2.3'
 
 services:
     mendixapp:
-        image: mendix/mendix-buildpack:v1.3
+        image: docker-test:v3.0
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost"]
             interval: 15s
