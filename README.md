@@ -45,7 +45,7 @@ Before running the container, it is necessary to build the image with your appli
 docker build 
   --build-arg BUILD_PATH=<mendix-project-location> \
   --build-arg CF_BUILDPACK=<cf-buildpack-version> \
-  <!-- --tag mendix/mendix-buildpack:v1.2 . -->
+  --tag mendix/mendix-buildpack:v1.2 .
 ```
 
 For build you can provide next arguments:
