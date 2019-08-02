@@ -106,7 +106,7 @@ docker run -it \
   -e MXRUNTIME_DatabaseUserName=mendix \
   -e MXRUNTIME_DatabasePassword=mendix \
   -e MXRUNTIME_DatabaseJdbcUrl=mysql://db:3306/mendix \
-  -e MXRUNTIME_DatabaseName: mendix \
+  -e MXRUNTIME_DatabaseName=mendix \
   mendix/mendix-buildpack:v1.2  
 ```
 
