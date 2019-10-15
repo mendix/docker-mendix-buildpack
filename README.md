@@ -11,7 +11,7 @@ Open a terminal and run the following code:
 > Important note: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
 
 ```
-git clone --branch <TAG> https://github.com/mendix/docker-mendix-buildpack
+git clone --branch <TAG> --config core.autocrlf=false https://github.com/mendix/docker-mendix-buildpack
 cd docker-mendix-buildpack
 make get-sample
 make build-image
@@ -51,7 +51,7 @@ docker build
 For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines, it's recommended to use a fixed version.
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines, it's recommended to use a fixed version from **3.2.4** and later.
 
 ### Startup
 
@@ -72,6 +72,41 @@ or for Microsoft SQL server
 docker run -it \
   -e ADMIN_PASSWORD=Password1! \
   -e DATABASE_ENDPOINT=sqlserver://username:password@host:port/mendix \
+  mendix/mendix-buildpack:v1.2  
+```
+
+Alternative ways to configure database connection:
+
+* `DATABASE_URL` environment variable
+
+```
+docker run -it \
+  -e ADMIN_PASSWORD=Password1! \
+  -e DATABASE_URL=sqlserver://username:password@host:port/mendix \
+  mendix/mendix-buildpack:v1.2  
+```
+
+* [Custom runtime settings](https://github.com/mendix/cf-mendix-buildpack/#configuring-custom-runtime-settings)
+
+```
+// full config
+docker run -it \
+  -e ADMIN_PASSWORD=Password1! \
+  -e MXRUNTIME_DatabaseType=MYSQL \
+  -e MXRUNTIME_DatabaseUserName=mendix \
+  -e MXRUNTIME_DatabasePassword=mendix \
+  -e MXRUNTIME_DatabaseName=mendix \
+  -e MXRUNTIME_DatabaseHost=host:port \
+  mendix/mendix-buildpack:v1.2  
+
+// config with jdbc url
+docker run -it \
+  -e ADMIN_PASSWORD=Password1! \
+  -e MXRUNTIME_DatabaseType=MYSQL \
+  -e MXRUNTIME_DatabaseUserName=mendix \
+  -e MXRUNTIME_DatabasePassword=mendix \
+  -e MXRUNTIME_DatabaseJdbcUrl=mysql://db:3306/mendix \
+  -e MXRUNTIME_DatabaseName=mendix \
   mendix/mendix-buildpack:v1.2  
 ```
 

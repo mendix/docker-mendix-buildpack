@@ -2,8 +2,10 @@
 import json
 import logging
 import os
+import pwd
 import re
 import subprocess
+import signal
 import sys
 import base64
 
@@ -14,55 +16,24 @@ logging.basicConfig(
     stream=sys.stdout,
     format='%(levelname)s: %(message)s',
 )
-def update_vcap_services(database_endpoint):
-    logging.debug("Executing update_vcap_services...")
 
-    vcap_services = dict()
-
-    if database_endpoint:
-        if 'postgres' in database_endpoint:
-            vcap_services['PostgreSQL'] = [{'credentials': { 'uri': database_endpoint } }]
-        if 'mysql' in database_endpoint:
-            vcap_services['p.mysql'] = [{'credentials': { 'uri': database_endpoint } }]
-        if 'sqlserver' in database_endpoint:
-            # Without DATABASE_URL env var, cf-mendix-buildpack supports sqlserver as azure-sqldb
-            vcap_services['azure-sqldb'] = [{'credentials': { 'jdbcUrl': database_endpoint } }]
-
-    if not vcap_services:
-        logging.error("Not supported database endpoint {0}"
-            .format(database_endpoint))
-        sys.exit(1)
-
-    return vcap_services
+def export_db_endpoint():
+    if 'DATABASE_ENDPOINT' in os.environ:
+        os.environ['DATABASE_URL'] = os.environ['DATABASE_ENDPOINT']
+    else:
+        if 'DATABASE_URL' not in os.environ:
+            logging.warning(
+            'DATABASE_ENDPOINT environment variable not found.'
+            'Fallback to custom runtime variables https://github.com/mendix/cf-mendix-buildpack/#configuring-custom-runtime-settings')
+            
 
 def export_vcap_variables():
     logging.debug("Executing build_vcap_variables...")
-
-    vcap_services = create_vcap_services()
-    logging.debug("Set environment variable VCAP_SERVICES: \n {0}"
-        .format(vcap_services))
-    os.environ['VCAP_SERVICES'] = vcap_services
 
     vcap_application = create_vcap_application()
     logging.debug("Set environment variable VCAP_APPLICATION: \n {0}"
         .format(vcap_application))
     os.environ['VCAP_APPLICATION'] = vcap_application
-
-def create_vcap_services():
-    logging.debug("Executing create_vcap_services...")
-    database_endpoint = os.environ['DATABASE_ENDPOINT']
-    if database_endpoint is None:
-        logging.error(
-            'DATABASE_ENDPOINT environment variable not found.'
-            'The database uri is required in order to startup the container.'
-        )
-        sys.exit(1)
-
-    vcap_services = update_vcap_services(database_endpoint)
-
-    vcap_services_str = json.dumps(vcap_services, sort_keys=True, indent=4,
-        separators=(',', ': '))
-    return vcap_services_str
 
 def create_vcap_application():
     logging.debug("Executing create_vcap_application...")
@@ -88,10 +59,38 @@ def export_encoded_cacertificates():
         logging.info("Decoding encoded CA certificates into CERTIFICATE_AUTHORITIES environment variable")
         certificate_authorities = base64.b64decode(certificate_authorities_base64)
         os.environ['CERTIFICATE_AUTHORITIES'] = str(certificate_authorities,'utf-8')
-            
-def call_builpack_startup():
-    logging.debug("Executing call_builpack_startup...")
-    subprocess.call(["python3", STARTUP_PATH])
+
+def sigchld_handler(_signo, _stack_frame):
+    # reap zombies
+    logging.debug("Child process has exited, getting result")
+    (waitpid, result) = os.waitpid(-1, os.WNOHANG)
+    logging.debug("Child process %s has exited with result %s" % (waitpid, result))
+
+def call_buildpack_startup():
+    logging.debug("Executing call_buildpack_startup...")
+
+    signal.signal(signal.SIGCHLD, sigchld_handler)
+
+    proc = subprocess.Popen(["python3", STARTUP_PATH], cwd='/opt/mendix/build')
+    
+    # Forward SIGTERM to allow a clean shutdown
+    def sig_forwarder(_signo, _stack_frame):
+        logging.debug("Forwarding SIGTERM to child process")
+        os.kill(proc.pid, _signo)
+    
+    signal.signal(signal.SIGTERM, sig_forwarder)
+
+    proc.wait()
+
+def add_uid():
+    try:
+        pwd.getpwuid(os.getuid())
+    except KeyError:
+        logging.info("Adding uid to /etc/passwd")
+        with open('/etc/passwd', 'r' ) as f:
+            passwd = f.read()
+        passwd = re.sub('^(mendix:x):(\d+:\d+):(.*)$', '\\1:{uid}:{gid}:\\3'.format(uid=os.getuid(), gid=os.getgid()), passwd, flags = re.M)
+        open('/etc/passwd','w').writelines(passwd)
 
 def get_welcome_header():
     welcome_ascii_header = '''
@@ -120,9 +119,11 @@ def get_welcome_header():
 
 if __name__ == '__main__':
     logging.info(get_welcome_header())
+    export_db_endpoint()
     export_vcap_variables()
     export_k8s_instance()
     
     export_encoded_cacertificates()
-    call_builpack_startup()
+    add_uid()
+    call_buildpack_startup()
     sys.exit(0)
