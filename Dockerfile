@@ -46,6 +46,7 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 # 5. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 6. Update permissions for /opt/mendix/build so that the app can run as a non-root user
 WORKDIR /opt/mendix/buildpack
+RUN chmod +rx /opt/mendix/buildpack/compilation
 RUN mkdir -p /tmp/buildcache &&\
     "/opt/mendix/buildpack/compilation" /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt &&\
