@@ -29,11 +29,11 @@ def export_vcap_services():
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
-    subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
+    return subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
 
 if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
-    call_buildpack_compilation()
-    sys.exit(0)
+    exit_code = call_buildpack_compilation()
+    sys.exit(exit_code)
