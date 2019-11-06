@@ -44,6 +44,7 @@ Before running the container, it is necessary to build the image with your appli
 ```
 docker build 
   --build-arg BUILD_PATH=<mendix-project-location> \
+  --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
   --build-arg CF_BUILDPACK=<cf-buildpack-version> \
   --tag mendix/mendix-buildpack:v1.2 .
 ```
@@ -51,7 +52,8 @@ docker build
 For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines, it's recommended to use a fixed version from **3.2.4** and later.
+- **ROOTFS_IMAGE** is a version of CloudFoundry buildpack. Defaults to `mendix/rootfs:bionic`. To use Ubuntu 16.04, change this to `mendix/rootfs:trusty`. It's also possible to use a custom rootfs image as described in [Advanced feature: full-build](#advanced-feature-full-build).
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines, it's recommended to use a fixed version from **v3.2.7** and later.
 
 ### Startup
 
@@ -283,11 +285,11 @@ This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment va
 
 ### Advanced feature: full-build
 
-To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs) Dockerfile. If you want to build the root-fs yourself you can use the following script:
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs.bionic) Dockerfile. If you want to build the root-fs yourself you can use the following script:
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t <root-fs-image-tag> -f Dockerfile.rootfs .
+	-t <root-fs-image-tag> -f Dockerfile.rootfs.bionic .
 ```
 
 After that you can build the target image with the next command:

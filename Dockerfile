@@ -3,7 +3,7 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.0.0
-ARG ROOTFS_IMAGE=mendix/rootfs:latest
+ARG ROOTFS_IMAGE=mendix/rootfs:trusty
 
 FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
