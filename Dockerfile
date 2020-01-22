@@ -31,20 +31,12 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
    chmod g+w /etc/passwd
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY --chown=mendix:root scripts/compilation /opt/mendix/buildpack
+COPY --chown=mendix:root scripts/compilation scripts/git /opt/mendix/buildpack/
 # Copy project model/sources
 COPY --chown=mendix:root $BUILD_PATH /opt/mendix/build
 
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
-
-# Work around for Git issue DES-1880
-# 1. Setting PATH variable
-# 2. Creating a binary named 'git'
-# 3. Provding exec permission to 'git' binary
-ENV PATH="/opt/mendix/buildpack/bin:${PATH}"
-RUN echo "#!/bin/sh \necho Git_Commit" > /opt/mendix/buildpack/bin/git &&\
-    chmod 751 /opt/mendix/buildpack/bin/git
 
 # Each comment corresponds to the script line:
 # 1. Create cache directory
@@ -56,7 +48,7 @@ RUN echo "#!/bin/sh \necho Git_Commit" > /opt/mendix/buildpack/bin/git &&\
 # 7. Update permissions for /opt/mendix/build so that the app can run as a non-root user
 WORKDIR /opt/mendix/buildpack
 RUN mkdir -p /tmp/buildcache &&\
-    chmod +rx /opt/mendix/buildpack/compilation &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     "/opt/mendix/buildpack/compilation" /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\

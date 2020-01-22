@@ -26,6 +26,7 @@ def export_vcap_services():
         .format(vcap_services_str))
 
     os.environ['VCAP_SERVICES'] = vcap_services_str
+    os.environ["PATH"] += os.pathsep + "/opt/mendix/buildpack"
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
