@@ -31,7 +31,7 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
    chmod g+w /etc/passwd
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY --chown=mendix:root scripts/compilation /opt/mendix/buildpack
+COPY --chown=mendix:root scripts/compilation scripts/git /opt/mendix/buildpack/
 # Copy project model/sources
 COPY --chown=mendix:root $BUILD_PATH /opt/mendix/build
 
@@ -48,7 +48,7 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 # 7. Update permissions for /opt/mendix/build so that the app can run as a non-root user
 WORKDIR /opt/mendix/buildpack
 RUN mkdir -p /tmp/buildcache &&\
-    chmod +rx /opt/mendix/buildpack/compilation &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     "/opt/mendix/buildpack/compilation" /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\
