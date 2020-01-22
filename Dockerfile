@@ -38,6 +38,14 @@ COPY --chown=mendix:root $BUILD_PATH /opt/mendix/build
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 
+# Work around for Git issue DES-1880
+# 1. Setting PATH variable
+# 2. Creating a binary named 'git'
+# 3. Provding exec permission to 'git' binary
+ENV PATH="/opt/mendix/buildpack/bin:${PATH}"
+RUN echo "#!/bin/sh \necho Git_Commit" > /opt/mendix/buildpack/bin/git &&\
+    chmod 751 /opt/mendix/buildpack/bin/git
+
 # Each comment corresponds to the script line:
 # 1. Create cache directory
 # 2. Set permissions for compilation script
