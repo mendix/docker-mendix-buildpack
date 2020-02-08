@@ -83,14 +83,9 @@ def call_buildpack_startup():
     proc.wait()
 
 def add_uid():
-    try:
-        pwd.getpwuid(os.getuid())
-    except KeyError:
-        logging.info("Adding uid to /etc/passwd")
-        with open('/etc/passwd', 'r' ) as f:
-            passwd = f.read()
-        passwd = re.sub('^(mendix:x):(\d+:\d+):(.*)$', '\\1:{uid}:{gid}:\\3'.format(uid=os.getuid(), gid=os.getgid()), passwd, flags = re.M)
-        open('/etc/passwd','w').writelines(passwd)
+    logging.info("Adding uid to /etc/passwd")
+    with open('/etc/passwd','a') as passwd_file:
+        passwd_file.write('mendix:x:{uid}:0:mendix user:/opt/mendix/build:/sbin/nologin\n'.format(uid=os.getuid()))
 
 def get_welcome_header():
     welcome_ascii_header = '''
