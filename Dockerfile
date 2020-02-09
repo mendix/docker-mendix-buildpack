@@ -21,15 +21,12 @@ ARG CF_BUILDPACK=master
 # 5. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
    echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-   curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xvz -C /opt/mendix/buildpack --strip-components 1 &&\
+   curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xz -C /opt/mendix/buildpack --strip-components 1 &&\
    chgrp -R 0 /opt/mendix &&\
    chmod -R g=u  /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation scripts/git /opt/mendix/buildpack/
-
-# Copy cleanupjdk script which will delete the JDK after a successful build
-COPY scripts/cleanupjdk /opt/mendix/buildpack/bin
 
 # Copy project model/sources
 COPY $BUILD_PATH /opt/mendix/build
@@ -38,24 +35,22 @@ COPY $BUILD_PATH /opt/mendix/build
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 
 # Each comment corresponds to the script line:
-# 1. Create cache directory
+# 1. Create cache directory and directory for dependencies which can be shared
 # 2. Set permissions for compilation scripts
 # 3. Navigate to buildpack directory
 # 4. Call compilation script
-# 5. Remove the JDK which is not needed after the build completes
-# 6. Remove temporary files
-# 7. Create symlink for java prefs used by CF buildpack
-# 8. Update ownership of /opt/mendix so that the app can run as a non-root user
-# 9. Update permissions of /opt/mendix so that the app can run as a non-root user
-RUN mkdir -p /tmp/buildcache &&\
-    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/bin/cleanupjdk &&\
+# 5. Remove temporary files
+# 6. Create symlink for java prefs used by CF buildpack
+# 7. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 8. Update permissions of /opt/mendix so that the app can run as a non-root user
+RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     cd /opt/mendix/buildpack &&\
     ./compilation /opt/mendix/build /tmp/buildcache &&\
-    bin/cleanupjdk /opt/mendix/build /tmp/buildcache &&\
-    rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt bin/cleanupjdk compilation &&\
+    rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\
-    chgrp -R 0 /opt/mendix &&\
-    chmod -R g=u /opt/mendix
+    chgrp -R 0 /opt/mendix /var/mendix &&\
+    chmod -R g=u /opt/mendix /var/mendix
 
 FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
@@ -77,6 +72,12 @@ COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
 RUN chmod +rx /opt/mendix/build/startup &&\
     chgrp -R 0 /opt/mendix &&\
     chmod -R g=u /opt/mendix
+
+# Copy jre from build container
+COPY --from=builder /var/mendix/build/.local/usr /opt/mendix/build/.local/usr
+
+# Copy Mendix Runtime from build container
+COPY --from=builder /var/mendix/build/runtimes /opt/mendix/build/runtimes
 
 # Copy build artifacts from build container
 COPY --from=builder /opt/mendix /opt/mendix
