@@ -2,7 +2,7 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 2.0.0
+# Version: 2.1.0
 ARG ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
@@ -20,10 +20,10 @@ ARG CF_BUILDPACK=master
 # 4. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 5. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
-   echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-   curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xz -C /opt/mendix/buildpack --strip-components 1 &&\
-   chgrp -R 0 /opt/mendix &&\
-   chmod -R g=u  /opt/mendix
+    echo "CF Buildpack version ${CF_BUILDPACK}" &&\
+    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xz -C /opt/mendix/buildpack --strip-components 1 &&\
+    chgrp -R 0 /opt/mendix &&\
+    chmod -R g=u  /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation scripts/git /opt/mendix/buildpack/
@@ -31,8 +31,11 @@ COPY scripts/compilation scripts/git /opt/mendix/buildpack/
 # Copy project model/sources
 COPY $BUILD_PATH /opt/mendix/build
 
+# Install the buildpack Python dependencies
+RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache
+
 # Add the buildpack modules
-ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
+ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
 
 # Each comment corresponds to the script line:
 # 1. Create cache directory and directory for dependencies which can be shared
@@ -44,7 +47,7 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
 # 7. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 8. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
-    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/compile.py &&\
     cd /opt/mendix/buildpack &&\
     ./compilation /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
@@ -60,7 +63,7 @@ LABEL maintainer="digitalecosystems@mendix.com"
 RUN chmod g=u /etc/passwd
 
 # Add the buildpack modules
-ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
+ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
 
 # Copy start scripts
 COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
@@ -92,4 +95,4 @@ ENV HOME "/opt/mendix/build"
 ENV PORT 8080
 EXPOSE $PORT
 
-ENTRYPOINT ["/opt/mendix/build/startup","/opt/mendix/buildpack/start.py"]
+ENTRYPOINT ["/opt/mendix/build/startup","/opt/mendix/buildpack/buildpack/start.py"]

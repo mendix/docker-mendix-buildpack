@@ -1,11 +1,11 @@
 mendixapp:
-    image: mendix/mendix-buildpack:v1.4
+    image: mendix/mendix-buildpack:$BUILDPACK_VERSION
     healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost"]
-            interval: 15s
-            retries: 2
-            start_period: 10s
-            timeout: 3s
+        test: ["CMD", "curl", "-f", "http://localhost"]
+        interval: 15s
+        retries: 2
+        start_period: 10s
+        timeout: 3s
     environment:
         - ADMIN_PASSWORD=Password1!
         - DATABASE_ENDPOINT=jdbc:sqlserver://db:1433;database=mendix;user=sa;password=Password1!

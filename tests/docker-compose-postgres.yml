@@ -1,8 +1,8 @@
-version: '2.3'
+version: "2.3"
 
 services:
     mendixapp:
-        image: mendix/mendix-buildpack:v1.3
+        image: mendix/mendix-buildpack:$BUILDPACK_VERSION
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost"]
             interval: 15s
