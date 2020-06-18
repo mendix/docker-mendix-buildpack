@@ -12,7 +12,7 @@ FROM ${ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.5.0
+ARG CF_BUILDPACK=v4.5.8
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
