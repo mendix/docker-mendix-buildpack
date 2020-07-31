@@ -34,7 +34,7 @@ def export_vcap_services():
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
-    return subprocess.call(["/opt/mendix/buildpack/buildpack/compile.py", BUILD_PATH, CACHE_PATH])
+    return subprocess.check_call(["/opt/mendix/buildpack/buildpack/compile.py", BUILD_PATH, CACHE_PATH])
     # return subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
 
 def remove_jdk():
