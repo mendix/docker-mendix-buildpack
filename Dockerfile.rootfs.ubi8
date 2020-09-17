@@ -1,0 +1,19 @@
+# Dockerfile to create a Mendix Docker image based on either the source code or
+# Mendix Deployment Archive (aka mda file)
+FROM registry.access.redhat.com/ubi8/ubi-minimal:latest
+#This version does a full build originating from the Ubuntu Docker images
+LABEL Author="Mendix Digital Ecosystems"
+LABEL maintainer="digitalecosystems@mendix.com"
+
+# Set the locale
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+
+# install dependencies & remove package lists
+# doesn't include libpq5 python3-distutils libgdiplus
+RUN microdnf update -y && \
+    microdnf install -y wget curl glibc-langpack-en python3 openssl tar gzip pcre && \
+    microdnf clean all && rm -rf /var/cache/yum
+
+# nginx workaround
+RUN ln -s /lib64/libpcre.so.1 /lib64/libpcre.so.3
