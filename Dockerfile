@@ -4,9 +4,10 @@
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
 ARG ROOTFS_IMAGE=mendix/rootfs:bionic
+ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
-FROM ${ROOTFS_IMAGE} AS builder
+FROM ${BUILDER_ROOTFS_IMAGE} AS builder
 
 # Build-time variables
 ARG BUILD_PATH=project
