@@ -6,8 +6,8 @@ LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
 # Set the locale
-ENV LANG en_US.UTF-8
-ENV LC_ALL en_US.UTF-8
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
 
 # install dependencies & remove package lists
 # doesn't include libpq5 python3-distutils libgdiplus
