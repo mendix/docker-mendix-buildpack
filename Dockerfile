@@ -12,18 +12,22 @@ FROM ${ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.9.4
+ARG CF_BUILDPACK=v4.12.0
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
 # 2. Download CF buildpack
-# 4. Update ownership of /opt/mendix so that the app can run as a non-root user
-# 5. Update permissions of /opt/mendix so that the app can run as a non-root user
+# 3. Extract CF buildpack
+# 4. Delete CF buildpack zip archive
+# 5. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 6. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xz -C /opt/mendix/buildpack --strip-components 1 &&\
+    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip -o /tmp/cf-mendix-buildpack.zip && \
+    python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
+    rm /tmp/cf-mendix-buildpack.zip &&\
     chgrp -R 0 /opt/mendix &&\
-    chmod -R g=u  /opt/mendix
+    chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
 COPY scripts/compilation scripts/git /opt/mendix/buildpack/
@@ -47,7 +51,7 @@ ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/o
 # 7. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 8. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
-    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/compile.py &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/stage.py &&\
     cd /opt/mendix/buildpack &&\
     ./compilation /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
