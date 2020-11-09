@@ -18,4 +18,4 @@ jobs:
 
       # Run the integration test script
       - name: Run integration tests
-        run: bash ./.travistest.sh
+        run: sh ./.integrationtest.sh
