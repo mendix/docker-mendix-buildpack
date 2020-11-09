@@ -31,7 +31,9 @@ This project is a goto reference for the following scenarios :
 
 ### Requirements
 
-* Docker (Installation [here](https://docs.docker.com/engine/installation/))
+* Docker 17.05 (Installation [here](https://docs.docker.com/engine/installation/))
+  * Earlier Docker versions are no longer compatible because they don't support multistage builds.
+    To use Docker versions below 17.05, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
 * For preparing, a local installation of wget (for macOS)
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
@@ -313,7 +315,7 @@ Contributions are welcomed:
 
 This was built with the following:
 
-* Docker version 1.12.6
+* Docker version 18.06.3
 
 ### Versioning
 
