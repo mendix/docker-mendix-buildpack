@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -eux
 docker version
 docker-compose version
