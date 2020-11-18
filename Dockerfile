@@ -2,63 +2,96 @@
 # Mendix Deployment Archive (aka mda file)
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
-# Version: 2.0.0
+# Version: 2.1.0
 ARG ROOTFS_IMAGE=mendix/rootfs:bionic
 
-FROM ${ROOTFS_IMAGE}
-LABEL Author="Mendix Digital Ecosystems"
-LABEL maintainer="digitalecosystems@mendix.com"
+# Build stage
+FROM ${ROOTFS_IMAGE} AS builder
 
 # Build-time variables
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=master
+ARG CF_BUILDPACK=v4.13.4
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
-# 2. Create mendix user with home directory at /opt/mendix/build
-# 4. Download CF buildpack
-# 5. Update the owner and group for /opt/mendix so that the app can run as a non-root user
-# 6. Update permissions for /opt/mendix so that the app can run as a non-root user
-# 7. Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
+# 2. Download CF buildpack
+# 3. Extract CF buildpack
+# 4. Delete CF buildpack zip archive
+# 5. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 6. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
-   useradd -r -g root -d /opt/mendix/build mendix &&\
-   echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-   wget -qO- https://github.com/mendix/cf-mendix-buildpack/archive/${CF_BUILDPACK}.tar.gz | tar xvz -C /opt/mendix/buildpack --strip-components 1 &&\
-   chown -R mendix:root /opt/mendix &&\
-   chmod -R g+rwX /opt/mendix &&\
-   chmod g+w /etc/passwd
+    echo "CF Buildpack version ${CF_BUILDPACK}" &&\
+    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip -o /tmp/cf-mendix-buildpack.zip && \
+    python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
+    rm /tmp/cf-mendix-buildpack.zip &&\
+    chgrp -R 0 /opt/mendix &&\
+    chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY --chown=mendix:root scripts/compilation /opt/mendix/buildpack
+COPY scripts/compilation scripts/git /opt/mendix/buildpack/
+
 # Copy project model/sources
-COPY --chown=mendix:root $BUILD_PATH /opt/mendix/build
+COPY $BUILD_PATH /opt/mendix/build
+
+# Install the buildpack Python dependencies
+RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache
 
 # Add the buildpack modules
-ENV PYTHONPATH "/opt/mendix/buildpack/lib/"
+ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
 
 # Each comment corresponds to the script line:
-# 1. Create cache directory
-# 2. Call compilation script
-# 3. Remove temporary folders
-# 4. Create symlink for java prefs used by CF buildpack
-# 5. Update ownership of /opt/mendix so that the app can run as a non-root user
-# 6. Update permissions for /opt/mendix/build so that the app can run as a non-root user
-WORKDIR /opt/mendix/buildpack
-RUN mkdir -p /tmp/buildcache &&\
-    "/opt/mendix/buildpack/compilation" /opt/mendix/build /tmp/buildcache &&\
-    rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt &&\
+# 1. Create cache directory and directory for dependencies which can be shared
+# 2. Set permissions for compilation scripts
+# 3. Navigate to buildpack directory
+# 4. Call compilation script
+# 5. Remove temporary files
+# 6. Create symlink for java prefs used by CF buildpack
+# 7. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 8. Update permissions of /opt/mendix so that the app can run as a non-root user
+RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
+    chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/stage.py &&\
+    cd /opt/mendix/buildpack &&\
+    ./compilation /opt/mendix/build /tmp/buildcache &&\
+    rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\
-    chown -R mendix:root /opt/mendix &&\
-    chmod -R g+rwX /opt/mendix
+    chgrp -R 0 /opt/mendix /var/mendix &&\
+    chmod -R g=u /opt/mendix /var/mendix
+
+FROM ${ROOTFS_IMAGE}
+LABEL Author="Mendix Digital Ecosystems"
+LABEL maintainer="digitalecosystems@mendix.com"
+
+# Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
+RUN chmod g=u /etc/passwd
+
+# Add the buildpack modules
+ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
 
 # Copy start scripts
-COPY --chown=mendix:root scripts/startup /opt/mendix/build
-COPY --chown=mendix:root scripts/vcap_application.json /opt/mendix/build
+COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
+
+# Each comment corresponds to the script line:
+# 1. Make the startup script executable
+# 2. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 3. Update permissions of /opt/mendix so that the app can run as a non-root user
+RUN chmod +rx /opt/mendix/build/startup &&\
+    chgrp -R 0 /opt/mendix &&\
+    chmod -R g=u /opt/mendix
+
+# Copy jre from build container
+COPY --from=builder /var/mendix/build/.local/usr /opt/mendix/build/.local/usr
+
+# Copy Mendix Runtime from build container
+COPY --from=builder /var/mendix/build/runtimes /opt/mendix/build/runtimes
+
+# Copy build artifacts from build container
+COPY --from=builder /opt/mendix /opt/mendix
+
 WORKDIR /opt/mendix/build
 
-USER mendix
+USER 1001
 
 ENV HOME "/opt/mendix/build"
 
@@ -66,4 +99,4 @@ ENV HOME "/opt/mendix/build"
 ENV PORT 8080
 EXPOSE $PORT
 
-ENTRYPOINT ["/opt/mendix/build/startup","/opt/mendix/buildpack/start.py"]
+ENTRYPOINT ["/opt/mendix/build/startup","/opt/mendix/buildpack/buildpack/start.py"]
