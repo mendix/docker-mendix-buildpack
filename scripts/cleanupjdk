@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+import shutil
+import logging
+import os
+import sys
+
+from buildpack import java, runtime, util
+from buildpack.stage import DOT_LOCAL_LOCATION
+
+if __name__ == '__main__':
+    logging.info("Deleting JDK...")
+    runtime.get_version("/opt/mendix/build/")
+    jdk = buildpack.util._determine_jdk(runtime.get_java_version(runtime.get_version("/opt/mendix/build/")), 'jdk')
+    jdk_path = os.path.join(DOT_LOCAL_LOCATION, buildpack.util._compose_jvm_target_dir(jdk))
+    shutil.rmtree(jdk_path, ignore_errors=False)

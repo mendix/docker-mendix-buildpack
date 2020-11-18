@@ -1,6 +1,6 @@
 # Docker Mendix Buildpack
 
-[![Build Status](https://travis-ci.org/mendix/docker-mendix-buildpack.svg?branch=master)](https://travis-ci.org/mendix/docker-mendix-buildpack)
+![Test status](https://github.com/mendix/docker-mendix-buildpack/workflows/Test/badge.svg)
 
 The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standard way to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
@@ -31,7 +31,9 @@ This project is a goto reference for the following scenarios :
 
 ### Requirements
 
-* Docker (Installation [here](https://docs.docker.com/engine/installation/))
+* Docker 17.05 (Installation [here](https://docs.docker.com/engine/installation/))
+  * Earlier Docker versions are no longer compatible because they don't support multistage builds.
+    To use Docker versions below 17.05, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](https://github.com/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
 * For preparing, a local installation of wget (for macOS)
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 
@@ -44,6 +46,7 @@ Before running the container, it is necessary to build the image with your appli
 ```
 docker build 
   --build-arg BUILD_PATH=<mendix-project-location> \
+  --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
   --build-arg CF_BUILDPACK=<cf-buildpack-version> \
   --tag mendix/mendix-buildpack:v1.2 .
 ```
@@ -51,7 +54,8 @@ docker build
 For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `master`. For stable pipelines, it's recommended to use a fixed version from **3.2.4** and later.
+- **ROOTFS_IMAGE** is a type of rootfs image. Defaults to `mendix/rootfs:bionic`. To use Ubuntu 14.04, change this to `mendix/rootfs:trusty`. It's also possible to use a custom rootfs image as described in [Advanced feature: full-build](#advanced-feature-full-build).
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.13.4`. For stable pipelines, it's recommended to use a fixed version from **v4.13.4** and later. CloudFoundry buildpack versions below **v4.12.0** are not supported.
 
 ### Startup
 
@@ -283,11 +287,11 @@ This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment va
 
 ### Advanced feature: full-build
 
-To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs) Dockerfile. If you want to build the root-fs yourself you can use the following script:
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs.bionic) Dockerfile. If you want to build the root-fs yourself you can use the following script:
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t <root-fs-image-tag> -f Dockerfile.rootfs .
+	-t <root-fs-image-tag> -f Dockerfile.rootfs.bionic .
 ```
 
 After that you can build the target image with the next command:
@@ -311,7 +315,7 @@ Contributions are welcomed:
 
 This was built with the following:
 
-* Docker version 1.12.6
+* Docker version 18.06.3
 
 ### Versioning
 

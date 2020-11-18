@@ -4,6 +4,10 @@ import logging
 import os
 import subprocess
 import sys
+import shutil
+
+from buildpack import java, runtime, util
+from buildpack.stage import DOT_LOCAL_LOCATION
 
 BUILD_PATH = sys.argv[1]
 CACHE_PATH = sys.argv[2]
@@ -26,14 +30,41 @@ def export_vcap_services():
         .format(vcap_services_str))
 
     os.environ['VCAP_SERVICES'] = vcap_services_str
+    os.environ["PATH"] += os.pathsep + "/opt/mendix/buildpack"
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
-    subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
+    return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH])
+    # return subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
+
+def remove_jdk():
+    logging.info("Removing JDK...")
+    runtime.get_version(BUILD_PATH)
+    
+    jdk = java.determine_jdk(runtime.get_java_version(runtime.get_version(BUILD_PATH)), 'jdk')
+    jdk_path = os.path.join(DOT_LOCAL_LOCATION, java.compose_jvm_target_dir(jdk))
+    if os.path.exists(jdk_path):
+        shutil.rmtree(jdk_path, ignore_errors=False)
+
+def make_dependencies_reusable():
+    logging.info("Making dependencies reusable...")
+    shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
+    shutil.move("/opt/mendix/build/.local/usr", "/var/mendix/build/.local/")
+    # separate cacerts from reusable jre components
+    jre = java.determine_jdk(runtime.get_java_version(runtime.get_version(BUILD_PATH)), 'jre')
+    jvm_location_reusable = os.path.join("/var/mendix/build/.local/", java.compose_jvm_target_dir(jre))
+    jvm_location_customized = os.path.join(DOT_LOCAL_LOCATION, java.compose_jvm_target_dir(jre))
+    cacerts_file_source = os.path.join(jvm_location_reusable, "lib", "security", "cacerts")
+    cacerts_file_target = os.path.join(jvm_location_customized, "lib", "security", "cacerts")
+    util.mkdir_p(os.path.dirname(cacerts_file_target))
+    os.rename(cacerts_file_source, cacerts_file_target)
 
 if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
-    call_buildpack_compilation()
-    sys.exit(0)
+    exit_code = call_buildpack_compilation()
+    if exit_code != 0:
+        sys.exit(exit_code)
+    remove_jdk()
+    make_dependencies_reusable()

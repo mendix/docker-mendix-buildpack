@@ -1,0 +1,21 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Run the integration test script
+      - name: Run integration tests
+        run: sh ./.integrationtest.sh
