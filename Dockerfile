@@ -65,8 +65,17 @@ FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
+# Uninstall build-time dependencies to remove potentially vulnerable libraries
+ARG UNINSTALL_BUILD_DEPENDENCIES=true
+
 # Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
 RUN chmod g=u /etc/passwd
+
+# Uninstall packages which are only required during build time
+RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] ; then\
+        DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
+        DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
+    fi
 
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
