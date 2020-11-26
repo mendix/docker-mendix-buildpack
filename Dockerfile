@@ -12,7 +12,9 @@ FROM ${ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.13.4
+ARG CF_BUILDPACK=v4.13.6
+# Exclude the logfilter binary by default
+ARG EXCLUDE_LOGFILTER=true
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
