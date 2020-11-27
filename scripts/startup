@@ -61,6 +61,13 @@ def export_encoded_cacertificates():
         certificate_authorities = base64.b64decode(certificate_authorities_base64)
         os.environ['CERTIFICATE_AUTHORITIES'] = str(certificate_authorities,'utf-8')
 
+def check_logfilter():
+    log_ratelimit_enabled = os.getenv('LOG_RATELIMIT', None) is not None
+    logfilter_path = './bin/mendix-logfilter'
+    if log_ratelimit_enabled and not os.path.exists(logfilter_path):
+        logging.warn("LOG_RATELIMIT is set, but the mendix-logfilter binary is missing. Rebuild Docker image with EXCLUDE_LOGFILTER=false to enable log filtering")
+        del os.environ['LOG_RATELIMIT']
+
 def sigchld_handler(_signo, _stack_frame):
     # reap zombies
     logging.debug("Child process has exited, getting result")
@@ -118,6 +125,7 @@ if __name__ == '__main__':
     export_db_endpoint()
     export_vcap_variables()
     export_k8s_instance()
+    check_logfilter()
     
     export_encoded_cacertificates()
     add_uid()

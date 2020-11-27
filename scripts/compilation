@@ -46,6 +46,16 @@ def remove_jdk():
     if os.path.exists(jdk_path):
         shutil.rmtree(jdk_path, ignore_errors=False)
 
+def fix_logfilter():
+    exclude_logfilter = os.getenv("EXCLUDE_LOGFILTER", "true").lower() == "true"
+    logfilter_path = "/opt/mendix/build/bin/mendix-logfilter"
+    if os.path.exists(logfilter_path):
+        if exclude_logfilter:
+            logging.info("Removing mendix-logfilter executable")
+            os.remove(logfilter_path)
+        else:
+            os.chmod(logfilter_path, 0o0755)
+
 def make_dependencies_reusable():
     logging.info("Making dependencies reusable...")
     shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
@@ -67,4 +77,6 @@ if __name__ == '__main__':
     if exit_code != 0:
         sys.exit(exit_code)
     remove_jdk()
+    fix_logfilter()
     make_dependencies_reusable()
+
