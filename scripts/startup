@@ -63,7 +63,7 @@ def export_encoded_cacertificates():
 
 def check_logfilter():
     log_ratelimit_enabled = os.getenv('LOG_RATELIMIT', None) is not None
-    logfilter_path = './bin/mendix-logfilter'
+    logfilter_path = '.local/mendix-logfilter/mendix-logfilter'
     if log_ratelimit_enabled and not os.path.exists(logfilter_path):
         logging.warn("LOG_RATELIMIT is set, but the mendix-logfilter binary is missing. Rebuild Docker image with EXCLUDE_LOGFILTER=false to enable log filtering")
         del os.environ['LOG_RATELIMIT']
