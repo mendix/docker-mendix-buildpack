@@ -12,7 +12,7 @@ FROM ${ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.13.6
+ARG CF_BUILDPACK=v4.14.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
 
