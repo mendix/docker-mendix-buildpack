@@ -16,6 +16,9 @@ ARG CF_BUILDPACK=v4.14.1
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
+# Allow specification of alternative BLOBSTORE location and debugging
+ARG BLOBSTORE
+ARG BUILDPACK_XTRACE
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
