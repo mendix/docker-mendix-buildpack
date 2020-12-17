@@ -35,7 +35,6 @@ def export_vcap_services():
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
     return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH])
-    # return subprocess.call(["/opt/mendix/buildpack/bin/compile", BUILD_PATH, CACHE_PATH])
 
 def remove_jdk():
     logging.info("Removing JDK...")
@@ -45,6 +44,16 @@ def remove_jdk():
     jdk_path = os.path.join(DOT_LOCAL_LOCATION, java.compose_jvm_target_dir(jdk))
     if os.path.exists(jdk_path):
         shutil.rmtree(jdk_path, ignore_errors=False)
+
+def fix_logfilter():
+    exclude_logfilter = os.getenv("EXCLUDE_LOGFILTER", "true").lower() == "true"
+    if exclude_logfilter:
+        logging.info("Removing mendix-logfilter executable")
+        shutil.rmtree("/opt/mendix/build/.local/mendix-logfilter")
+        shutil.rmtree("/opt/mendix/buildpack/vendor/mendix-logfilter")
+    else:
+        os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
+
 
 def make_dependencies_reusable():
     logging.info("Making dependencies reusable...")
@@ -67,4 +76,6 @@ if __name__ == '__main__':
     if exit_code != 0:
         sys.exit(exit_code)
     remove_jdk()
+    fix_logfilter()
     make_dependencies_reusable()
+

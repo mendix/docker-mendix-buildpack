@@ -12,7 +12,9 @@ FROM ${ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.13.4
+ARG CF_BUILDPACK=v4.14.1
+# Exclude the logfilter binary by default
+ARG EXCLUDE_LOGFILTER=true
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -63,8 +65,17 @@ FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
+# Uninstall build-time dependencies to remove potentially vulnerable libraries
+ARG UNINSTALL_BUILD_DEPENDENCIES=true
+
 # Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
 RUN chmod g=u /etc/passwd
+
+# Uninstall packages which are only required during build time
+RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] ; then\
+        DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
+        DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
+    fi
 
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"

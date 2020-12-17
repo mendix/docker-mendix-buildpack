@@ -55,7 +55,9 @@ For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
 - **ROOTFS_IMAGE** is a type of rootfs image. Defaults to `mendix/rootfs:bionic`. To use Ubuntu 14.04, change this to `mendix/rootfs:trusty`. It's also possible to use a custom rootfs image as described in [Advanced feature: full-build](#advanced-feature-full-build).
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.13.4`. For stable pipelines, it's recommended to use a fixed version from **v4.13.4** and later. CloudFoundry buildpack versions below **v4.12.0** are not supported.
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.14.1`. For stable pipelines, it's recommended to use a fixed version from **v4.14.1** and later. CloudFoundry buildpack versions below **v4.14.0** are not supported.
+- **EXCLUDE_LOGFILTER** will exclude the `mendix-logfilter` binary from the resulting Docker image if set to `true`. Defaults to `true`. Excluding `mendix-logfilter` will reduce the image size and remove a component that's not commonly used; the `LOG_RATELIMIT` environment variable option will be disabled.
+- **UNINSTALL_BUILD_DEPENDENCIES** will uninstall packages which are not needed to launch an app, and are only used during the build phase. Defaults to `true`. This option will remove several libraries which are known to have unpatched CVE vulnerabilities.
 
 ### Startup
 
