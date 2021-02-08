@@ -16,6 +16,8 @@ ARG DD_API_KEY
 ARG CF_BUILDPACK=v4.14.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
+# Use nginx supplied by the base OS by default
+ARG SYSTEM_NGINX=true
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -73,7 +75,7 @@ ARG UNINSTALL_BUILD_DEPENDENCIES=true
 RUN chmod g=u /etc/passwd
 
 # Uninstall packages which are only required during build time
-RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] ; then\
+RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] && grep -q ubuntu /etc/os-release ; then\
         DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
         DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
     fi
