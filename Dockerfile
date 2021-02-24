@@ -3,7 +3,7 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
-ARG ROOTFS_IMAGE=mendix/rootfs:bionic
+ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
 ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
@@ -16,8 +16,6 @@ ARG DD_API_KEY
 ARG CF_BUILDPACK=v4.14.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
-# Use nginx supplied by the base OS by default
-ARG SYSTEM_NGINX=true
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -45,6 +43,9 @@ RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpac
 
 # Add the buildpack modules
 ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
+
+# Use nginx supplied by the base OS
+ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
 # Each comment corresponds to the script line:
 # 1. Create cache directory and directory for dependencies which can be shared
@@ -102,6 +103,9 @@ COPY --from=builder /var/mendix/build/runtimes /opt/mendix/build/runtimes
 
 # Copy build artifacts from build container
 COPY --from=builder /opt/mendix /opt/mendix
+
+# Use nginx supplied by the base OS
+ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
 WORKDIR /opt/mendix/build
 

@@ -54,16 +54,6 @@ def fix_logfilter():
     else:
         os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
 
-def remove_nginx():
-    system_nginx = os.getenv("SYSTEM_NGINX", "true").lower() == "true"
-    if system_nginx:
-        logging.info("Switching to nginx provided by base OS")
-        os.remove("/opt/mendix/build/nginx/sbin/nginx")
-        os.symlink("/usr/sbin/nginx", "/opt/mendix/build/nginx/sbin/nginx")
-        shutil.rmtree("/opt/mendix/build/nginx/modules")
-    else:
-        logging.info("Using nginx provided by the Buildpack")
-
 def make_dependencies_reusable():
     logging.info("Making dependencies reusable...")
     shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
@@ -86,6 +76,5 @@ if __name__ == '__main__':
         sys.exit(exit_code)
     remove_jdk()
     fix_logfilter()
-    remove_nginx()
     make_dependencies_reusable()
 
