@@ -13,7 +13,7 @@ FROM ${BUILDER_ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.14.1
+ARG CF_BUILDPACK=v4.15.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
 
@@ -86,6 +86,11 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/bu
 
 # Copy start scripts
 COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
+
+# Create vcap home directory for Datadog configuration
+RUN mkdir -p /home/vcap &&\
+    chgrp -R 0 /home/vcap &&\
+    chmod -R g=u /home/vcap
 
 # Each comment corresponds to the script line:
 # 1. Make the startup script executable
