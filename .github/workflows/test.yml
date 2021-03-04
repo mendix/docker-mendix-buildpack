@@ -9,12 +9,49 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
+  test-default:
+    name: Test with default parameters
     runs-on: ubuntu-latest
 
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+
+      # Run the integration test script
+      - name: Run integration tests
+        run: sh ./.integrationtest.sh
+
+  test-bionic:
+    name: Test with a bionic rootfs
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Switch to Ubuntu Bionic rootfs
+      - name: Switch to Ubuntu Bionic rootfs
+        run: |
+          echo -n "mendix/rootfs:bionic" > rootfs.version
+          echo -n "bionic" > docker-buildpack.version
+
+      # Run the integration test script
+      - name: Run integration tests
+        run: sh ./.integrationtest.sh
+
+  test-ubi8:
+    name: Test with a ubi8 rootfs
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Switch to ubi8 rootfs
+      - name: Switch to ubi8 rootfs
+        run: |
+          echo -n "mendix/rootfs:ubi8" > rootfs.version
+          echo -n "ubi8" > docker-buildpack.version
 
       # Run the integration test script
       - name: Run integration tests

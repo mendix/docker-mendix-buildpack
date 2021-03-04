@@ -1,5 +1,6 @@
 VERSION=$(shell cat docker-buildpack.version)
 CF_BUILDPACK_VERSION=$(shell cat cf-buildpack.version)
+ROOTFS_VERSION=$(shell cat rootfs.version)
 
 get-sample:
 	if [ -d build ]; then rm -rf build; fi
@@ -12,6 +13,7 @@ build-image:
 	docker build \
 	--build-arg BUILD_PATH=build \
 	--build-arg CF_BUILDPACK=$(CF_BUILDPACK_VERSION) \
+	--build-arg ROOTFS_IMAGE=$(ROOTFS_VERSION) \
 	-t mendix/mendix-buildpack:$(VERSION) .
 
 test-container:

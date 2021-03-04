@@ -54,7 +54,6 @@ def fix_logfilter():
     else:
         os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
 
-
 def make_dependencies_reusable():
     logging.info("Making dependencies reusable...")
     shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")

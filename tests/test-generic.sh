@@ -11,9 +11,9 @@ echo "Testing buildpack version ${BUILDPACK_VERSION}"
 echo "test.sh [TEST STARTED] starting docker-compose $COMPOSEFILE"
 docker-compose -f $COMPOSEFILE up &
 
-timeout $TIMEOUT bash -c 'until curl http://localhost:8080 | grep "<title>Mendix</title>"; do sleep 5; done'
+timeout $TIMEOUT bash -c 'until curl -s http://localhost:8080 | grep "<title>Mendix</title>"; do sleep 5; done'
 
-curl http://localhost:8080 | grep "<title>Mendix</title>"
+curl -s http://localhost:8080 | grep "<title>Mendix</title>"
 RETURN_CODE=$?
 if [ $RETURN_CODE -eq "0" ]; then
   echo "test.sh [TEST SUCCESS] App is reachable for $COMPOSEFILE"

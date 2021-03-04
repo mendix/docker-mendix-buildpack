@@ -3,16 +3,17 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
-ARG ROOTFS_IMAGE=mendix/rootfs:bionic
+ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
+ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
-FROM ${ROOTFS_IMAGE} AS builder
+FROM ${BUILDER_ROOTFS_IMAGE} AS builder
 
 # Build-time variables
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.14.1
+ARG CF_BUILDPACK=v4.15.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
 
@@ -43,6 +44,9 @@ RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpac
 # Add the buildpack modules
 ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
 
+# Use nginx supplied by the base OS
+ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
+
 # Each comment corresponds to the script line:
 # 1. Create cache directory and directory for dependencies which can be shared
 # 2. Set permissions for compilation scripts
@@ -72,7 +76,7 @@ ARG UNINSTALL_BUILD_DEPENDENCIES=true
 RUN chmod g=u /etc/passwd
 
 # Uninstall packages which are only required during build time
-RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] ; then\
+RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] && grep -q ubuntu /etc/os-release ; then\
         DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
         DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
     fi
@@ -82,6 +86,11 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/bu
 
 # Copy start scripts
 COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
+
+# Create vcap home directory for Datadog configuration
+RUN mkdir -p /home/vcap &&\
+    chgrp -R 0 /home/vcap &&\
+    chmod -R g=u /home/vcap
 
 # Each comment corresponds to the script line:
 # 1. Make the startup script executable
@@ -99,6 +108,9 @@ COPY --from=builder /var/mendix/build/runtimes /opt/mendix/build/runtimes
 
 # Copy build artifacts from build container
 COPY --from=builder /opt/mendix /opt/mendix
+
+# Use nginx supplied by the base OS
+ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
 WORKDIR /opt/mendix/build
 
