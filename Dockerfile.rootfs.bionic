@@ -17,5 +17,7 @@ RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-RUN chgrp -R 0 /var/log/nginx /var/lib/nginx &&\
-    chmod -R g=u /var/log/nginx /var/lib/nginx
+# Set nginx permissions
+RUN touch /run/nginx.pid && \
+    chgrp -R 0 /var/log/nginx /var/lib/nginx /run/nginx.pid &&\
+    chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid

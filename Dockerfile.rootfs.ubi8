@@ -16,6 +16,7 @@ RUN dnf update -y && \
     dnf install -y wget curl glibc-langpack-en python3 openssl tar gzip nginx nginx-mod-stream fontconfig && \
     dnf clean all && rm -rf /var/cache/yum
 
+# Set nginx permissions
 RUN touch /run/nginx.pid && \
     chgrp -R 0 /run/nginx.pid &&\
     chmod -R g=u /run/nginx.pid
