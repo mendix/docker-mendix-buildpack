@@ -75,7 +75,7 @@ ARG UNINSTALL_BUILD_DEPENDENCIES=true
 # Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
 RUN chmod g=u /etc/passwd
 
-# Uninstall packages which are only required during build time
+# Uninstall Ubuntu packages which are only required during build time
 RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] && grep -q ubuntu /etc/os-release ; then\
         DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
         DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
