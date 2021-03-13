@@ -16,6 +16,8 @@ ARG DD_API_KEY
 ARG CF_BUILDPACK=v4.15.1
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
+#Add Offline buildpack support
+ARG BLOBSTORE="https://cdn.mendix.com"
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -42,7 +44,7 @@ COPY $BUILD_PATH /opt/mendix/build
 RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache
 
 # Add the buildpack modules
-ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
+ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/" BLOBSTORE=$BLOBSTORE
 
 # Use nginx supplied by the base OS
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
