@@ -60,6 +60,8 @@ For build you can provide next arguments:
 - **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.15.1`. For stable pipelines, it's recommended to use a fixed version from **v4.15.1** and later. CloudFoundry buildpack versions below **v4.15.1** are not supported.
 - **EXCLUDE_LOGFILTER** will exclude the `mendix-logfilter` binary from the resulting Docker image if set to `true`. Defaults to `true`. Excluding `mendix-logfilter` will reduce the image size and remove a component that's not commonly used; the `LOG_RATELIMIT` environment variable option will be disabled.
 - **UNINSTALL_BUILD_DEPENDENCIES** will uninstall packages which are not needed to launch an app, and are only used during the build phase. Defaults to `true`. This option will remove several libraries which are known to have unpatched CVE vulnerabilities.
+- **CF_BUILDPACK_URL** specifies the URL where the CF buildpack should be downloaded from (for example, a local mirror). Defaults to `https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip`. Specifying **CF_BUILDPACK_URL** will override the version from **CF_BUILDPACK**.
+- **BLOBSTORE** can be used to specify an alternative buildpack resource server (instead of the default Mendix CDN). For more information, see the [CF Buildpack offline settings](https://github.com/mendix/cf-mendix-buildpack#offline-buildpack-settings).
 
 ### Startup
 
