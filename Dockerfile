@@ -14,8 +14,15 @@ ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
 ARG CF_BUILDPACK=v4.15.1
+# CF buildpack download URL
+ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
+
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
+
+# Allow specification of alternative BLOBSTORE location and debugging
+ARG BLOBSTORE
+ARG BUILDPACK_XTRACE
 
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
@@ -25,8 +32,8 @@ ARG EXCLUDE_LOGFILTER=true
 # 5. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 6. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
-    echo "CF Buildpack version ${CF_BUILDPACK}" &&\
-    curl -fsSL https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip -o /tmp/cf-mendix-buildpack.zip && \
+    echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
+    curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
     rm /tmp/cf-mendix-buildpack.zip &&\
     chgrp -R 0 /opt/mendix &&\
