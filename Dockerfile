@@ -13,7 +13,7 @@ FROM ${BUILDER_ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.15.1
+ARG CF_BUILDPACK=v4.15.4
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
