@@ -19,6 +19,8 @@ ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/down
 
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
+#Add Offline buildpack support
+ARG BLOBSTORE="https://cdn.mendix.com"
 
 # Allow specification of alternative BLOBSTORE location and debugging
 ARG BLOBSTORE
@@ -49,7 +51,7 @@ COPY $BUILD_PATH /opt/mendix/build
 RUN chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache
 
 # Add the buildpack modules
-ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"
+ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/" BLOBSTORE=$BLOBSTORE
 
 # Use nginx supplied by the base OS
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
