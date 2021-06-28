@@ -39,6 +39,19 @@ def create_vcap_application():
     logging.debug("Executing create_vcap_application...")
     vcap_application_data = open("vcap_application.json").read()
     return vcap_application_data
+
+def export_industrial_edge_config_variable():
+    logging.debug("Executing export_industrial_edge_config_variable...")
+
+    if 'IEM_CONFIG_FILEPATH' in os.environ:
+            config_filename = os.environ.get('IEM_CONFIG_FILEPATH')
+            logging.debug("IEM Config file found: %s" % (config_filename))
+            with open(config_filename) as config_file:
+                for line in config_file:
+                    name, var = line.partition("=")[::2]
+                    logging.debug("Adding Env-variable : %s=%s" % (name.strip(), var.strip()))
+                    os.environ[name.strip()] = var.strip()
+                    
     
 def export_k8s_instance():
     logging.debug("Checking Kubernetes environment...")
@@ -124,6 +137,7 @@ if __name__ == '__main__':
     logging.info(get_welcome_header())
     export_db_endpoint()
     export_vcap_variables()
+    export_industrial_edge_config_variable()
     export_k8s_instance()
     check_logfilter()
     
