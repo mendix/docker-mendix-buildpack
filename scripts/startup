@@ -43,14 +43,17 @@ def create_vcap_application():
 def export_industrial_edge_config_variable():
     logging.info("Executing export_industrial_edge_config_variable...")
 
-    if 'IEM_CONFIG_FILEPATH' in os.environ:
-            config_filename = os.environ.get('IEM_CONFIG_FILEPATH')
-            logging.info("IEM Config file found: %s" % (config_filename))
-            with open(config_filename) as config_file:
-                for line in config_file:
-                    name, var = line.partition("=")[::2]
-                    logging.info("Adding Env-variable : %s=%s" % (name.strip(), var.strip()))
-                    os.environ[name.strip()] = var.strip()
+    if 'IEM_CONFIG_PATH' in os.environ:
+            config_path = os.environ.get('IEM_CONFIG_PATH')
+            logging.info("IEM Config path set to: %s" % (config_path))
+            for file in os.listdir(config_path):
+                if file.endswith(".env"):
+                    logging.info("IEM ENV Config file found : %s" % (file))
+                    with open("%s/%s" % (config_path, file)) as config_file:
+                        for line in config_file:
+                            name, var = line.partition("=")[::2]
+                            logging.info("Adding Env-variable : %s=%s" % (name.strip(), var.strip()))
+                            os.environ[name.strip()] = var.strip()
                     
     
 def export_k8s_instance():
