@@ -45,11 +45,13 @@ def export_industrial_edge_config_variable():
 
     if 'IEM_CONFIG_PATH' in os.environ:
             config_path = os.environ.get('IEM_CONFIG_PATH')
+            if not config_path.endswith("/"):
+                config_path = "%s/" % (config_path)
             logging.info("IEM Config path set to: %s" % (config_path))
             for file in os.listdir(config_path):
                 if file.endswith(".env"):
                     logging.info("IEM ENV Config file found : %s" % (file))
-                    with open("%s/%s" % (config_path, file)) as config_file:
+                    with open("%s%s" % (config_path, file)) as config_file:
                         for line in config_file:
                             name, var = line.partition("=")[::2]
                             logging.info("Adding Env-variable : %s=%s" % (name.strip(), var.strip()))
