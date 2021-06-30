@@ -321,7 +321,7 @@ The container will query for a specific location, based on the environment varia
 Below an example compose file including the "IEM_CONFIG_PATH""
 
 ```
-mxpandelpad:
+myapp:
   environment:
     ADMIN_PASSWORD: *******
     DATABASE_ENDPOINT: 'jdbc:hsqldb:file:~/data/database/db:mem:mendix'
