@@ -308,8 +308,36 @@ docker build
   --build-arg BUILD_PATH=<mendix-project-location> \
   --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
   --build-arg BUILDER_ROOTFS_IMAGE=<builder-root-fs-image-tag> \
-	-t mendix/mendix-buildpack:v1.2 .
 ```
+	-t mendix/mendix-buildpack:v1.2 .
+
+
+### Industrial Edge Configuration File support
+
+When running Mendix on Industrial Edge it is possible to add a configuration file for each Edge device with specific environment variable next to the default variable which are configured within the docker compose file. 
+
+The container will query for a specific location, based on the environment variable: "IEM_CONFIG_PATH", for files with the extention ".env".  Such a file can contain 1 or more environment variable, which will be added to the environment variable of the container. This can be used to set Edge device specific Constants, Scheduled events or custom runtime settings. Check [here](https://github.com/mendix/cf-mendix-buildpack#configuring-constants) for the syntax to use. 
+
+Below an example compose file including the "IEM_CONFIG_PATH""
+
+```
+myapp:
+  environment:
+    ADMIN_PASSWORD: *******
+    DATABASE_ENDPOINT: 'jdbc:hsqldb:file:~/data/database/db:mem:mendix'
+    MXRUNTIME_DatabaseType: HSQLDB
+    MXRUNTIME_DatabaseJdbcUrl: 'jdbc:hsqldb:file:~/data/database/db:mem:mendix'
+    IEM_CONFIG_PATH: /publish
+  image: 'sample_app:1.1'
+  volumes:
+    - './publish/:/publish/'
+    - './cfg-data/:/cfg-data/'
+  mem_limit: 1gb
+  restart: unless-stopped
+  ports:
+    - '60000:8080'
+```
+
 
 ## Contributions
 
