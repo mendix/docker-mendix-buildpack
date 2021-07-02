@@ -24,6 +24,9 @@ ARG EXCLUDE_LOGFILTER=true
 ARG BLOBSTORE
 ARG BUILDPACK_XTRACE
 
+# Set the user ID
+ARG USER_UID=1001
+
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
 # 2. Download CF buildpack
@@ -36,7 +39,7 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
     rm /tmp/cf-mendix-buildpack.zip &&\
-    chgrp -R 0 /opt/mendix &&\
+    chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
@@ -69,7 +72,7 @@ RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
     ./compilation /opt/mendix/build /tmp/buildcache &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\
-    chgrp -R 0 /opt/mendix /var/mendix &&\
+    chown -R ${USER_UID}:0 /opt/mendix /var/mendix &&\
     chmod -R g=u /opt/mendix /var/mendix
 
 FROM ${ROOTFS_IMAGE}
@@ -79,8 +82,14 @@ LABEL maintainer="digitalecosystems@mendix.com"
 # Uninstall build-time dependencies to remove potentially vulnerable libraries
 ARG UNINSTALL_BUILD_DEPENDENCIES=true
 
-# Allow the root group to modify /etc/passwd so that the startup script can update the non-root uid
-RUN chmod g=u /etc/passwd
+# Set the user ID
+ARG USER_UID=1001
+# Set the home path
+ENV HOME=/opt/mendix/build
+
+# Allow the user group to modify /etc/passwd so that OpenShift 3 randomized UIDs are supported by CF Buildpack 
+RUN chmod g=u /etc/passwd &&\
+    chown ${USER_UID}:0 /etc/passwd
 
 # Uninstall Ubuntu packages which are only required during build time
 RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] && grep -q ubuntu /etc/os-release ; then\
@@ -96,16 +105,20 @@ COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
 
 # Create vcap home directory for Datadog configuration
 RUN mkdir -p /home/vcap &&\
-    chgrp -R 0 /home/vcap &&\
+    chown -R ${USER_UID}:0 /home/vcap &&\
     chmod -R g=u /home/vcap
 
 # Each comment corresponds to the script line:
 # 1. Make the startup script executable
 # 2. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 3. Update permissions of /opt/mendix so that the app can run as a non-root user
+# 4. Ensure that running Java 8 as root will still be able to load offline licenses
 RUN chmod +rx /opt/mendix/build/startup &&\
-    chgrp -R 0 /opt/mendix &&\
-    chmod -R g=u /opt/mendix
+    chown -R ${USER_UID}:0 /opt/mendix &&\
+    chmod -R g=u /opt/mendix &&\
+    ln -s /opt/mendix/.java /root
+
+USER ${USER_UID}
 
 # Copy jre from build container
 COPY --from=builder /var/mendix/build/.local/usr /opt/mendix/build/.local/usr
@@ -120,10 +133,6 @@ COPY --from=builder /opt/mendix /opt/mendix
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
 WORKDIR /opt/mendix/build
-
-USER 1001
-
-ENV HOME "/opt/mendix/build"
 
 # Expose nginx port
 ENV PORT 8080

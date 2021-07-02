@@ -19,7 +19,7 @@ ENV LC_ALL en_US.UTF-8
 
 # Set nginx permissions
 RUN touch /run/nginx.pid && \
-    chgrp -R 0 /var/log/nginx /var/lib/nginx /run/nginx.pid &&\
+    chown -R 1001:0 /var/log/nginx /var/lib/nginx /run/nginx.pid &&\
     chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
 
 # Set python alias to python3 (required for Datadog)
