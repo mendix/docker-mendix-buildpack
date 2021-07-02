@@ -36,15 +36,6 @@ def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
     return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH])
 
-def remove_jdk():
-    logging.info("Removing JDK...")
-    runtime.get_version(BUILD_PATH)
-    
-    jdk = java.determine_jdk(runtime.get_java_version(runtime.get_version(BUILD_PATH)), 'jdk')
-    jdk_path = os.path.join(DOT_LOCAL_LOCATION, java.compose_jvm_target_dir(jdk))
-    if os.path.exists(jdk_path):
-        shutil.rmtree(jdk_path, ignore_errors=False)
-
 def fix_logfilter():
     exclude_logfilter = os.getenv("EXCLUDE_LOGFILTER", "true").lower() == "true"
     if exclude_logfilter:
@@ -74,7 +65,5 @@ if __name__ == '__main__':
     exit_code = call_buildpack_compilation()
     if exit_code != 0:
         sys.exit(exit_code)
-    remove_jdk()
     fix_logfilter()
     make_dependencies_reusable()
-
