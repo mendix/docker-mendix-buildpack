@@ -327,7 +327,7 @@ myapp:
     DATABASE_ENDPOINT: 'jdbc:hsqldb:file:~/data/database/db:mem:mendix'
     MXRUNTIME_DatabaseType: HSQLDB
     MXRUNTIME_DatabaseJdbcUrl: 'jdbc:hsqldb:file:~/data/database/db:mem:mendix'
-    IEM_CONFIG_PATH: /publish
+    IEM_CONFIG_PATH: /cfg-data
   image: 'sample_app:1.1'
   volumes:
     - './publish/:/publish/'
