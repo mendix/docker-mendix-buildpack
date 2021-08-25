@@ -13,7 +13,7 @@ FROM ${BUILDER_ROOTFS_IMAGE} AS builder
 ARG BUILD_PATH=project
 ARG DD_API_KEY
 # CF buildpack version
-ARG CF_BUILDPACK=v4.17.1
+ARG CF_BUILDPACK=v4.20.0
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
@@ -35,6 +35,7 @@ ARG USER_UID=1001
 # 5. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 6. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
+    ln -s /root /home/vcap &&\
     echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
     curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
@@ -104,9 +105,9 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/bu
 COPY scripts/startup scripts/vcap_application.json /opt/mendix/build/
 
 # Create vcap home directory for Datadog configuration
-RUN mkdir -p /home/vcap &&\
-    chown -R ${USER_UID}:0 /home/vcap &&\
-    chmod -R g=u /home/vcap
+RUN mkdir -p /home/vcap /opt/datadog-agent/run &&\
+    chown -R ${USER_UID}:0 /home/vcap /opt/datadog-agent/run &&\
+    chmod -R g=u /home/vcap /opt/datadog-agent/run
 
 # Each comment corresponds to the script line:
 # 1. Make the startup script executable

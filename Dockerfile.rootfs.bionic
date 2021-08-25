@@ -8,7 +8,7 @@ LABEL maintainer="digitalecosystems@mendix.com"
 # When doing a full build: install dependencies & remove package lists
 RUN apt-get -q -y update && \
  DEBIAN_FRONTEND=noninteractive apt-get upgrade -q -y && \
- DEBIAN_FRONTEND=noninteractive apt-get install -q -y wget curl unzip libpq5 locales python3 python3-distutils libssl1.0.0 libgdiplus nginx-light libnginx-mod-stream && \
+ DEBIAN_FRONTEND=noninteractive apt-get install -q -y wget curl unzip libpq5 locales python3 python3-distutils libssl1.0.0 libgdiplus nginx-light libnginx-mod-stream binutils && \
  rm -rf /var/lib/apt/lists/* && \
  apt-get clean
 
