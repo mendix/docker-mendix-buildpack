@@ -3,6 +3,7 @@ set -eux
 docker version
 docker-compose version
 make get-sample
+make build-base-images
 make build-image
 tests/test-generic.sh tests/docker-compose-postgres.yml
 #tests/test-generic.sh tests/docker-compose-sqlserver.yml

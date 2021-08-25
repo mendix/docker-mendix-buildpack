@@ -1,6 +1,7 @@
 VERSION=$(shell cat docker-buildpack.version)
 CF_BUILDPACK_VERSION=$(shell cat cf-buildpack.version)
 ROOTFS_VERSION=$(shell cat rootfs.version)
+ROOTFS_IMAGES=$(patsubst Dockerfile.rootfs.%, rootfs.%, $(wildcard Dockerfile.rootfs.*))
 
 get-sample:
 	if [ -d build ]; then rm -rf build; fi
@@ -8,6 +9,12 @@ get-sample:
 	mkdir -p downloads build
 	wget https://s3-eu-west-1.amazonaws.com/mx-buildpack-ci/BuildpackTestApp-mx-7-16.mda -O downloads/application.mpk
 	unzip downloads/application.mpk -d build/
+
+rootfs.%: Dockerfile.rootfs.%
+	docker build \
+	-t mendix/rootfs:$* -f Dockerfile.rootfs.$* .
+
+build-base-images: $(ROOTFS_IMAGES)
 
 build-image:
 	docker build \
