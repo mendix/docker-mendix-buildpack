@@ -13,7 +13,7 @@ ENV LC_ALL C.UTF-8
 # doesn't include libpq5 python3-distutils libgdiplus
 RUN dnf update -y && \
     dnf module enable nginx:1.18 -y && \
-    dnf install -y wget curl glibc-langpack-en python3 openssl tar gzip unzip nginx nginx-mod-stream fontconfig && \
+    dnf install -y wget curl glibc-langpack-en python3 openssl tar gzip unzip nginx nginx-mod-stream binutils fontconfig && \
     dnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions
