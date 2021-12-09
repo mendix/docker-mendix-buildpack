@@ -3,11 +3,13 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
-ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
-ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
 FROM mendix/rootfs:bionic AS builder
+
+// move down for ocp3 (have builder first)
+ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
+ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build-time variables
 ARG BUILD_PATH=project
