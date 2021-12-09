@@ -76,7 +76,7 @@ RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
     chown -R ${USER_UID}:0 /opt/mendix /var/mendix &&\
     chmod -R g=u /opt/mendix /var/mendix
 
-FROM mendix/rootfs:ubi8
+FROM mendix/rootfs:bionic
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
