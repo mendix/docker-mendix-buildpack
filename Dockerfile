@@ -7,7 +7,7 @@ ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
 ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
 # Build stage
-FROM ${BUILDER_ROOTFS_IMAGE} AS builder
+FROM mendix/rootfs:bionic AS builder
 
 # Build-time variables
 ARG BUILD_PATH=project
@@ -76,7 +76,7 @@ RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
     chown -R ${USER_UID}:0 /opt/mendix /var/mendix &&\
     chmod -R g=u /opt/mendix /var/mendix
 
-FROM ${ROOTFS_IMAGE}
+FROM mendix/rootfs:ubi8
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
