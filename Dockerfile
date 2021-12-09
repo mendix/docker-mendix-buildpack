@@ -7,7 +7,7 @@
 # Build stage
 FROM mendix/rootfs:bionic AS builder
 
-// move down for ocp3 (have builder first)
+# (cut) move down for ocp3 (have builder first)
 ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
 ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
