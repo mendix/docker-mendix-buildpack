@@ -123,12 +123,10 @@ RUN chmod +rx /opt/mendix/build/startup &&\
     chmod -R 777 /etc/nginx &&\
     ln -s /opt/mendix/.java /root
     
-RUN rm /run/nginx.pid || true
+RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
 
 # remove user forcing
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
-# nginx get pid out of /run folder
-RUN sed -i.bak 's/run/tmp/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
 # nginx get pid out of /run folder
 RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
