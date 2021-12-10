@@ -121,6 +121,8 @@ RUN chmod +rx /opt/mendix/build/startup &&\
     chmod -R g=u /opt/mendix &&\
     chmod -R g=u /usr/sbin/nginx &&\
     ln -s /opt/mendix/.java /root
+    
+RUN rm /run/nginx.pid || true
 
 USER ${USER_UID}
 
