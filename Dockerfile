@@ -125,7 +125,7 @@ RUN chmod +rx /opt/mendix/build/startup &&\
     
 RUN rm /run/nginx.pid || true
 
-RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
+RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
 USER ${USER_UID}
 
