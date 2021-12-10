@@ -8,7 +8,7 @@
 # (cut) no $ and dynamic setting - hardcode 
 FROM mendix/rootfs:bionic AS builder
 
-# (cut) move down for ocp3 (have builder first)
+# (cut) moved down for ocp3 (have builder FROM clause first)
 ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
 ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
 
@@ -127,16 +127,16 @@ RUN chmod +rx /opt/mendix/build/startup &&\
     chmod -R 777 /etc/nginx &&\
     ln -s /opt/mendix/.java /root
     
-# allow non-root user to write the pid file
+# NGINX allow non-root user to write the pid file
 RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
 
 # NGINX remove user forcing (user nginx)
-RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
+RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 
 # NGINX fix listening - for non root port has to be > 1024 - makes it consistent with EXPOSE below
-RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
+RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf
 
-# temp to diagnose nginx issues
+# (cut) temp to diagnose nginx issues
 RUN yum -y install net-tools
 
 USER ${USER_UID}
