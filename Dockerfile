@@ -130,6 +130,9 @@ RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.co
 # nginx get pid out of /run folder
 RUN sed -i.bak 's/run/tmp/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
+# nginx get pid out of /run folder
+RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
+
 RUN yum -y install net-tools
 
 USER ${USER_UID}
@@ -151,8 +154,5 @@ WORKDIR /opt/mendix/build
 # Expose nginx port
 ENV PORT 8080
 EXPOSE $PORT
-
-# port as configured in nginx
-EXPOSE 80
 
 ENTRYPOINT ["/opt/mendix/build/startup","/opt/mendix/buildpack/buildpack/start.py"]
