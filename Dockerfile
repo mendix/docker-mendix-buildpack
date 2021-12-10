@@ -127,7 +127,8 @@ RUN rm /run/nginx.pid || true
 
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
-RUN yum install net-tools
+# makes the build hang, so no netstat
+# RUN yum install net-tools
 
 USER ${USER_UID}
 
