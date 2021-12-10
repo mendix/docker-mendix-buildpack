@@ -119,6 +119,7 @@ RUN mkdir -p /home/vcap /opt/datadog-agent/run &&\
 RUN chmod +rx /opt/mendix/build/startup &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R g=u /opt/mendix &&\
+    chmod -R g=u /usr/sbin/nginx &&\
     ln -s /opt/mendix/.java /root
 
 USER ${USER_UID}
