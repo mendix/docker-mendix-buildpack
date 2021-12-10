@@ -127,7 +127,7 @@ RUN rm /run/nginx.pid || true
 
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
-RUN apt install net-tools
+RUN yum install net-tools
 
 USER ${USER_UID}
 
