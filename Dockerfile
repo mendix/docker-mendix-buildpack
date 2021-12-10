@@ -4,7 +4,7 @@
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
 
-# Build stage
+# Build stage (cut) no $ and dynamic setting - hardcode 
 FROM mendix/rootfs:bionic AS builder
 
 # (cut) move down for ocp3 (have builder first)
@@ -115,22 +115,26 @@ RUN mkdir -p /home/vcap /opt/datadog-agent/run &&\
 # 1. Make the startup script executable
 # 2. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 3. Update permissions of /opt/mendix so that the app can run as a non-root user
-# 4. Ensure that running Java 8 as root will still be able to load offline licenses
+# 4. Update ownership of /etc/nginx so that the app can run as a non-root user
+# 5. Update permissions of /etc/nginx so that the app can run as a non-root user
+# 6. Ensure that running Java 8 as root will still be able to load offline licenses
 RUN chmod +rx /opt/mendix/build/startup &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
-    chown -R ${USER_UID}:0 /etc/nginx &&\
     chmod -R 777 /opt/mendix &&\
+    chown -R ${USER_UID}:0 /etc/nginx &&\
     chmod -R 777 /etc/nginx &&\
     ln -s /opt/mendix/.java /root
     
+# allow non-root user to write the pid file
 RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
 
-# remove user forcing
+# remove user forcing (user nginx)
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
-# nginx get pid out of /run folder
+# fix listening - for non root port has to be > 1024 - makes it consistent with EXPOSE below
 RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf && cat /etc/nginx/nginx.conf
 
+# temp to diagnose nginx issues
 RUN yum -y install net-tools
 
 USER ${USER_UID}
