@@ -23,5 +23,5 @@ RUN touch /run/nginx.pid && \
     chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
 
 # Set python alias to python3 (required for Datadog)
-RUN ln -s python3 /usr/bin/python
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3 1
 
