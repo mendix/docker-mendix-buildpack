@@ -84,7 +84,7 @@ services:
             - db
         # restart: always
     db:
-        image: postgres
+        image: postgres:13
         healthcheck:
             test: ["CMD", "pg_isready", "-U", "mendix"]
             interval: 5s
