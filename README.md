@@ -217,7 +217,7 @@ MXRUNTIME_com_mendix_storage_s3_EndPoint foo
 
 The scheduled events can be configured using environment variable `SCHEDULED_EVENTS`.
 
-Possible values are `ALL`, `NONE` or a comma separated list of the scheduled events that you would like to enable. For example: `ModuleA.ScheduledEvent.ModuleB.OtherScheduledEvent`
+Possible values are `ALL`, `NONE` or a comma separated list of the scheduled events that you would like to enable. For example: `ModuleA.ScheduledEvent,ModuleB.OtherScheduledEvent`
 
 An example in a docker run command:
 
