@@ -123,15 +123,15 @@ RUN mkdir -p /home/vcap /opt/datadog-agent/run &&\
 RUN chmod +rx /opt/mendix/build/startup &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R 777 /opt/mendix &&\
-    chown -R ${USER_UID}:0 /etc/nginx &&\
-    chmod -R 777 /etc/nginx &&\
     ln -s /opt/mendix/.java /root
+#  chown -R ${USER_UID}:0 /etc/nginx &&\
+#  chmod -R 777 /etc/nginx &&\
     
 # NGINX allow non-root user to write the pid file
-RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
+# RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
 
 # NGINX remove user forcing (user nginx)
-RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
+# RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 
 # NGINX fix listening - for non root port has to be > 1024 - makes it consistent with EXPOSE below
 # (cut) needs DC variable called PORT ..
