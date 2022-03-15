@@ -134,7 +134,8 @@ RUN chown -R ${USER_UID}:0 /run/nginx.pid && chmod -R 777 /run/nginx.pid
 RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 
 # NGINX fix listening - for non root port has to be > 1024 - makes it consistent with EXPOSE below
-RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf
+# (cut) needs DC variable called PORT ..
+# RUN sed -i.bak 's/80/8080/' /etc/nginx/nginx.conf
 
 # (cut) temp to diagnose nginx issues
 RUN yum -y install net-tools
