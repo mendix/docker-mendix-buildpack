@@ -29,4 +29,4 @@ test-container:
 	tests/test-generic.sh tests/docker-compose-azuresql.yml
 
 run-container:
-	BUILDPACK_VERSION=$(VERSION) docker-compose -f tests/docker-compose-mysql.yml up
+	BUILDPACK_VERSION=$(VERSION) docker-compose -f tests/docker-compose-postgres.yml up
