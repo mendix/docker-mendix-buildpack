@@ -2,7 +2,7 @@
 
 ![Test status](https://github.com/mendix/docker-mendix-buildpack/workflows/Test/badge.svg)
 
-The Mendix Buildpack for Docker (aka docker-mendix-buildpack) provides a standard way to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
+The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an example project you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
 ## Try a sample mendix application
 
@@ -187,8 +187,6 @@ environment:
                 -----BEGIN CERTIFICATE-----
                 MIIGejCCBGKgAwIBAgIJANuKwREDEb4sM....
 ```
-
-Requested a test scenario from Jouke and Xiwen, meanwhile will update docker-buildpack documentation.
 
 ### Configuring Custom Runtime Settings
 
