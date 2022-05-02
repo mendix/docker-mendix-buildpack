@@ -67,10 +67,10 @@ ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 # 6. Create symlink for java prefs used by CF buildpack
 # 7. Update ownership of /opt/mendix so that the app can run as a non-root user
 # 8. Update permissions of /opt/mendix so that the app can run as a non-root user
-RUN mkdir -p /tmp/buildcache /var/mendix/build /var/mendix/build/.local &&\
+RUN mkdir -p /tmp/buildcache /tmp/cf-deps /var/mendix/build /var/mendix/build/.local &&\
     chmod +rx /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/stage.py &&\
     cd /opt/mendix/buildpack &&\
-    ./compilation /opt/mendix/build /tmp/buildcache &&\
+    ./compilation /opt/mendix/build /tmp/buildcache /tmp/cf-deps 0 &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation /opt/mendix/buildpack/git &&\
     ln -s /opt/mendix/.java /opt/mendix/build &&\
     chown -R ${USER_UID}:0 /opt/mendix /var/mendix &&\
