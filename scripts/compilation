@@ -12,6 +12,8 @@ from buildpack.stage import DOT_LOCAL_LOCATION
 
 BUILD_PATH = sys.argv[1]
 CACHE_PATH = sys.argv[2]
+DEPS_DIR = sys.argv[3]
+DEPS_IDX = sys.argv[4]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -35,7 +37,7 @@ def export_vcap_services():
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
-    return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH])
+    return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH, DEPS_DIR, DEPS_IDX])
 
 def fix_logfilter():
     exclude_logfilter = os.getenv("EXCLUDE_LOGFILTER", "true").lower() == "true"
