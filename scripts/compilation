@@ -44,7 +44,6 @@ def fix_logfilter():
     if exclude_logfilter:
         logging.info("Removing mendix-logfilter executable")
         shutil.rmtree("/opt/mendix/build/.local/mendix-logfilter")
-        shutil.rmtree("/opt/mendix/buildpack/vendor/mendix-logfilter")
     else:
         os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
 
@@ -53,9 +52,9 @@ def make_dependencies_reusable():
     shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
     shutil.move("/opt/mendix/build/.local/usr", "/var/mendix/build/.local/")
     # separate cacerts from reusable jre components
-    jre = java.determine_jdk(runtime.get_java_version(runtime.get_runtime_version(BUILD_PATH)), 'jre')
-    jvm_location_reusable = os.path.join("/var/mendix/build/.local/", java.compose_jvm_target_dir(jre))
-    jvm_location_customized = os.path.join(DOT_LOCAL_LOCATION, java.compose_jvm_target_dir(jre))
+    jre = java._get_java_dependency(java.get_java_major_version(runtime.get_runtime_version(BUILD_PATH)), 'jre')
+    jvm_location_reusable = os.path.join("/var/mendix/build/.local/", java._compose_jvm_target_dir(jre))
+    jvm_location_customized = os.path.join(DOT_LOCAL_LOCATION, java._compose_jvm_target_dir(jre))
     cacerts_file_source = os.path.join(jvm_location_reusable, "lib", "security", "cacerts")
     cacerts_file_target = os.path.join(jvm_location_customized, "lib", "security", "cacerts")
     util.mkdir_p(os.path.dirname(cacerts_file_target))
