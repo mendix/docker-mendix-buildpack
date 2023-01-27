@@ -12,7 +12,7 @@ services:
         environment:
             ADMIN_PASSWORD: Password1!
             DATABASE_ENDPOINT: postgres://mendix:mendix@db:5432/mendix
-            # - MXRUNTIME_License_SubscriptionSecret=tuudRzchqLlPqKDJNuU4bQb71sJSbVnNPo285TxI
+            # - MXRUNTIME_License_SubscriptionSecret=<subscriptionsecret>
             # - MXRUNTIME_License_UseLicenseServer=true
             CERTIFICATE_AUTHORITIES: |-
                 -----BEGIN CERTIFICATE-----
