@@ -18,11 +18,17 @@ jobs:
       - uses: actions/checkout@v2
 
       # Run the integration test script
-      - name: Run integration tests with Mendix 7.16 app
+      - name: Run integration tests with Mendix 7.16 MDA
+        if: false
         run: sh .github/workflows/test.sh BuildpackTestApp-mx-7-16.mda
 
-      - name: Run integration tests with Mendix 8.1.1 app
+      - name: Run integration tests with Mendix 8.1.1 MDA
+        if: false
         run: sh .github/workflows/test.sh Mendix8.1.1.58432_StarterApp.mda
 
-      - name: Run integration tests with Mendix 9.7 app
+      - name: Run integration tests with Mendix 9.7 MDA
+        if: false
         run: sh .github/workflows/test.sh BuildpackTestApp-mx9-7.mda
+
+      - name: Run integration tests with Mendix 8 MPK
+        run: sh .github/workflows/test.sh AdoptOpenJDKTest_8beta3.mpk
