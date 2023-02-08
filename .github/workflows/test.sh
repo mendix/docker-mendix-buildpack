@@ -1,15 +1,29 @@
 #!/bin/bash
-set -u
+set -uex
 
-BASEDIR=$(dirname "$0")
-COMPOSEFILE=$1
+docker version
+docker-compose version
+
+TEST_MDA=$1
+echo "Downloading test MDA"
+
+curl -sL -o app.mda https://s3-eu-west-1.amazonaws.com/mx-buildpack-ci/${TEST_MDA}
+unzip app.mda -d project/
+
+echo "Building test app"
+
+export PROJECTSOURCE=project
+export TARGETIMAGE=testapp
+
+./build.sh
+
+rm -rf app.mda project
+
+COMPOSEFILE=docker-compose/docker-compose.yml
 TIMEOUT=180s
 
-export BUILDPACK_VERSION="${BUILDPACK_VERSION:-$(cat $BASEDIR/../docker-buildpack.version)}"
-
-echo "Testing buildpack version ${BUILDPACK_VERSION}"
 echo "test.sh [TEST STARTED] starting docker-compose $COMPOSEFILE"
-docker-compose -f $COMPOSEFILE up &
+TARGETIMAGE=$TARGETIMAGE docker-compose -f $COMPOSEFILE up &
 
 timeout $TIMEOUT bash -c 'until curl -s http://localhost:8080 | grep "<title>Mendix</title>"; do sleep 5; done'
 
