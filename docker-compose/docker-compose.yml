@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  mendixapp:
+    image: ${TARGETIMAGE:-mendixapp}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 15s
+      retries: 2
+      start_period: 60s
+      timeout: 3s
+    environment:
+      MXRUNTIME_DatabaseType: PostgreSQL
+      MXRUNTIME_DatabaseJdbcUrl: jdbc:postgresql://db:5432/mendix?sslmode=prefer
+      MXRUNTIME_DatabaseHost: db:5432
+      MXRUNTIME_DatabaseName: mendix
+      MXRUNTIME_DatabaseUserName: mendix
+      MXRUNTIME_DatabasePassword: mendix
+    ports:
+      - 8080:8080
+    working_dir: /opt/mendix/app
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: postgres
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "mendix"]
+      interval: 5s
+      retries: 10
+      start_period: 10s
+      timeout: 2s
+    environment:
+      POSTGRES_USER: mendix
+      POSTGRES_PASSWORD: mendix
