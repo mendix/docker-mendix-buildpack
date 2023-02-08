@@ -6,6 +6,9 @@ PASSWORD=`echo -n $M2EE_ADMIN_PASS | base64`
 echo "Processing constants"
 APP_CONSTANTS=$(cat /opt/mendix/app/model/metadata.json | \
   jq -rc '.Constants | map({(.Name) : .DefaultValue}) | add')
+if [ $APP_CONSTANTS = 'null' ]; then
+    APP_CONSTANTS='{}'
+fi
 
 echo "Processing environment variables"
 
