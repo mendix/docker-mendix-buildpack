@@ -41,8 +41,11 @@ echo "Project is based on Mendix $MX_VERSION"
 echo "Getting JVM version"
 MX_MAJOR_VERSION=$(echo $MX_VERSION | head -n 1 | cut -d . -f 1)
 MX_MINOR_VERSION=$(echo $MX_VERSION | head -n 1 | cut -d . -f 2)
-if [ $MX_MAJOR_VERSION -le 7 ] || [ $MX_MAJOR_VERSION -eq 8 ]; then
+if [ $MX_MAJOR_VERSION -le 7 ]; then
     JAVA_VERSION=1.8.0
+    DOTNET_VERSION="mono520"
+elif [ $MX_MAJOR_VERSION -eq 8 ]; then
+    JAVA_VERSION=11
     DOTNET_VERSION="mono520"
 elif [ $MX_MAJOR_VERSION -eq 9 ] && [ $MX_MINOR_VERSION -lt 16 ]; then
     JAVA_VERSION=11
