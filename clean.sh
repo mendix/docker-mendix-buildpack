@@ -9,5 +9,4 @@ if [ ! -z "$CONTAINERS" ]; then
 fi
 
 docker container prune --force --filter "label=${LABELS}"
-docker volume prune  --force --filter "label=${LABELS}"
 rm -f app.tar

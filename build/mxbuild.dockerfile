@@ -44,6 +44,10 @@ RUN echo "mendix:x:${USER_UID}:0:mendix user:${USER_HOME}:/sbin/nologin" >> /mnt
     mkdir -p /mnt/rootfs/${USER_HOME} &&\
     chown ${USER_UID}:0 /mnt/rootfs/${USER_HOME}
 
+COPY mxbuild.sh /usr/local/bin/
+RUN chown 0:0 /usr/local/bin/mxbuild.sh &&\
+    chmod uga=rx /usr/local/bin/mxbuild.sh
+
 # Download MxBuild
 FROM registry.access.redhat.com/ubi8/ubi as downloader
 
@@ -83,6 +87,13 @@ COPY mxbuild.sh /usr/local/bin/
 
 # Copy downloaded MxBuild
 COPY --from=downloader /mxbuild /opt/mendix
+
+# Copy build script
+COPY --from=builder /usr/local/bin/mxbuild.sh /usr/local/bin/
+
+# Create working directory
+RUN mkdir -p /workdir/project/ /workdir/app &&\
+    chown -R $USER_UID:0 /workdir
 
 CMD /usr/local/bin/mxbuild.sh
 

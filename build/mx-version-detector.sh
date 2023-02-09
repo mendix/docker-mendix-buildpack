@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-MPR_FILE=/workdir/project/*.mpr
+MPR_FILE=/workdir/project/*/*.mpr
 if [ ! -f $MPR_FILE ]; then
     echo "MPR not found" >&2
     exit 1

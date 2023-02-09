@@ -18,10 +18,4 @@ $MXBUILD_COMMAND \
     --output=/opt/mendix/home/output.mda /workdir/project/*.mpr
 
 # Extract MDA
-mkdir -p /workdir/mendix/app 
-cd /workdir/mendix/app && jar xvf /opt/mendix/home/output.mda
-
-# Set permissions for init scripts
-cp -R /workdir/init /workdir/mendix/init
-chown -R 1001:0 /workdir/mendix/init
-chmod uga=rx /workdir/mendix/init /workdir/mendix/init/*.sh /workdir/mendix/init/init.d /workdir/mendix/init/init.d/*
+cd /workdir/app && jar xvf /opt/mendix/home/output.mda

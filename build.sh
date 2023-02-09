@@ -4,6 +4,7 @@ set -e
 BUILDER_IMAGES_REPOSITORY=mendix/nextgen-buildpack
 IMAGE_VERSIONDETECT=${BUILDER_IMAGES_REPOSITORY}/mx-version-detector
 IMAGE_MXBUILD=${BUILDER_IMAGES_REPOSITORY}/mxbuild
+IMAGE_RUNTIME=${BUILDER_IMAGES_REPOSITORY}/runtime-base
 PROJECTSOURCE=${PROJECTSOURCE:-project}
 PROJECT_TAG=${PROJECT_TAG:-unknown}
 TARGETIMAGE=${TARGETIMAGE:-mendixapp}
@@ -12,31 +13,17 @@ DOCKERFILE=${DOCKERFILE:-app.dockerfile}
 LABELS="buildpack=mendix"
 
 echo "Building Mendix version detector image"
-docker build -f build/mxversion.dockerfile -t $IMAGE_VERSIONDETECT build
-
-echo "Creating work volume"
-WORK_VOLUME=$(docker volume create --label $LABELS)
-
-echo "Copying files to work volume"
-TRANSFER_CONTAINER=$(docker container create \
-    -v $WORK_VOLUME:/workdir --label $LABELS \
-    $IMAGE_VERSIONDETECT)
-docker cp $PROJECTSOURCE $TRANSFER_CONTAINER:/workdir/project
-docker cp init $TRANSFER_CONTAINER:/workdir/init
-docker cp build $TRANSFER_CONTAINER:/workdir/build
-
-echo "Updating permissions in work volume"
-docker run -u 0:0 --rm \
-    -v $WORK_VOLUME:/workdir --label $LABELS \
-    $IMAGE_VERSIONDETECT \
-    sh -c 'chown -R 1001:0 /workdir'
+docker build --force-rm \
+    -f build/mxversion.dockerfile -t $IMAGE_VERSIONDETECT build
 
 echo "Getting Mendix version"
-MX_VERSION=$(docker run --rm \
-    -v $WORK_VOLUME:/workdir --label $LABELS \
-    $IMAGE_VERSIONDETECT \
-    mx-version-detector.sh)
+DETECT_VERSION_CONTAINER=$(docker container create \
+    --label $LABELS \
+    $IMAGE_VERSIONDETECT)
+docker cp $PROJECTSOURCE $DETECT_VERSION_CONTAINER:/workdir/project
+MX_VERSION=$(docker start -a $DETECT_VERSION_CONTAINER)
 echo "Project is based on Mendix $MX_VERSION"
+docker rm $DETECT_VERSION_CONTAINER
 
 echo "Getting JVM version"
 MX_MAJOR_VERSION=$(echo $MX_VERSION | head -n 1 | cut -d . -f 1)
@@ -66,21 +53,17 @@ docker build \
   --build-arg DOTNET_VERSION=${DOTNET_VERSION} \
   -f build/mxbuild.dockerfile -t ${IMAGE_MXBUILD}:${MX_VERSION} build
 
-echo "Building the project MDA"
-docker run --rm \
-    -v $WORK_VOLUME:/workdir --label $LABELS \
-    ${IMAGE_MXBUILD}:${MX_VERSION}
-
-echo "Extracting project artifacts"
-docker cp "$TRANSFER_CONTAINER:/workdir/mendix" - > app.tar
-
-echo "Building project image"
+echo "Building Mendix Runtime $MX_VERSION image"
 docker build \
   --build-arg MX_VERSION=${MX_VERSION} \
   --build-arg JAVA_VERSION=${JAVA_VERSION} \
-  -f ${DOCKERFILE} -t ${TARGETIMAGE} .
+  -f runtime/runtime.dockerfile -t ${IMAGE_RUNTIME}:${MX_VERSION} runtime
+
+echo "Building app image"
+docker build --force-rm \
+  --build-arg MX_VERSION=${MX_VERSION} \
+  --build-arg IMAGE_MXBUILD=${IMAGE_MXBUILD} \
+  --build-arg IMAGE_RUNTIME=${IMAGE_RUNTIME} \
+  -f ${DOCKERFILE} -t ${TARGETIMAGE} ${PROJECTSOURCE}
 
 echo "Cleaning up"
-docker rm $TRANSFER_CONTAINER
-docker volume rm $WORK_VOLUME
-rm app.tar

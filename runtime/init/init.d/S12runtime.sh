@@ -35,7 +35,7 @@ do
     esac
 done
 
-# TODO: set master/slave
+# TODO: set primary/extra instance
 # TODO: set DTAPMode
 RUNTIME_OPTIONS=$(echo -n $RUNTIME_OPTIONS | \
     jq -rc --arg constants "$APP_CONSTANTS" \
