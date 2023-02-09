@@ -5,7 +5,7 @@ ARG JAVA_VERSION
 ARG MX_VERSION
 ARG DOWNLOAD_URL=https://download.mendix.com/runtimes/
 ARG USER_UID=1001
-ARG USER_HOME=/opt/mendix/home
+ARG USER_HOME=/opt/mendix/app
 
 # Mount ubi-micro rootfs
 COPY --from=registry.access.redhat.com/ubi8/ubi-micro / /mnt/rootfs
@@ -49,7 +49,7 @@ FROM registry.access.redhat.com/ubi8/ubi-micro
 
 ARG JAVA_VERSION
 ARG USER_UID=1001
-ARG USER_HOME=/opt/mendix/home
+ARG USER_HOME=/opt/mendix/app
 
 # Set the locale
 ENV LANG C.UTF-8
