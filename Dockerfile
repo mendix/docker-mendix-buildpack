@@ -59,9 +59,6 @@ ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/o
 # Use nginx supplied by the base OS
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
-# Skip CF Buildpack's version check
-RUN rm /etc/*-release && echo 'Ubuntu release 18.04 (Bionic)' > /etc/debian-release
-
 # Each comment corresponds to the script line:
 # 1. Create cache directory and directory for dependencies which can be shared
 # 2. Set permissions for compilation scripts
@@ -84,9 +81,6 @@ FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
 
-# Uninstall build-time dependencies to remove potentially vulnerable libraries
-ARG UNINSTALL_BUILD_DEPENDENCIES=true
-
 # Set the user ID
 ARG USER_UID=1001
 # Set the home path
@@ -95,12 +89,6 @@ ENV HOME=/opt/mendix/build
 # Allow the user group to modify /etc/passwd so that OpenShift 3 randomized UIDs are supported by CF Buildpack 
 RUN chmod g=u /etc/passwd &&\
     chown ${USER_UID}:0 /etc/passwd
-
-# Uninstall Ubuntu packages which are only required during build time
-RUN if [ "$UNINSTALL_BUILD_DEPENDENCIES" = "true" ] && grep -q ubuntu /etc/os-release ; then\
-        DEBIAN_FRONTEND=noninteractive apt-mark manual libfontconfig1 && \
-        DEBIAN_FRONTEND=noninteractive apt-get remove --purge --auto-remove -q -y wget curl libgdiplus ; \
-    fi
 
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.6/site-packages/"

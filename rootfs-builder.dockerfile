@@ -21,6 +21,9 @@ RUN touch /run/nginx.pid && \
     chown -R 1001:0 /var/log/nginx /var/lib/nginx /run/nginx.pid &&\
     chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
 
+# Pretend to be Ubuntu to bypass CF Buildpack's check
+RUN rm /etc/*-release && echo 'Ubuntu release 18.04 (Bionic)' > /etc/debian-release
+
 # Set python alias to python3 (required for Datadog)
 RUN alternatives --set python /usr/bin/python3
 

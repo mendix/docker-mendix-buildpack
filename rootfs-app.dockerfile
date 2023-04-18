@@ -12,7 +12,7 @@ ENV LC_ALL C.UTF-8
 # install dependencies & remove package lists
 RUN microdnf update -y && \
     microdnf module enable nginx:1.20 -y && \
-    microdnf install -y wget curl glibc-langpack-en python3 openssl tar gzip unzip nginx nginx-mod-stream binutils fontconfig && \
+    microdnf install -y glibc-langpack-en python3 openssl nginx nginx-mod-stream binutils fontconfig && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions

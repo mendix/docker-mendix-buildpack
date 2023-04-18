@@ -5,9 +5,6 @@ BASEDIR=$(dirname "$0")
 COMPOSEFILE=$1
 TIMEOUT=180s
 
-export BUILDPACK_VERSION="${BUILDPACK_VERSION:-$(cat $BASEDIR/../docker-buildpack.version)}"
-
-echo "Testing buildpack version ${BUILDPACK_VERSION}"
 echo "test.sh [TEST STARTED] starting docker-compose $COMPOSEFILE"
 docker-compose -f $COMPOSEFILE up &
 
