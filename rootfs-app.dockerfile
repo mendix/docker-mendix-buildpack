@@ -23,3 +23,8 @@ RUN touch /run/nginx.pid && \
 # Set python alias to python3 (required for Datadog)
 RUN alternatives --set python /usr/bin/python3
 
+# Set the user ID
+ARG USER_UID=1001
+
+# Create user (for non-OpenShift clusters)
+RUN echo "mendix:x:${USER_UID}:${USER_UID}:mendix user:/opt/mendix/build:/sbin/nologin" >> /etc/passwd

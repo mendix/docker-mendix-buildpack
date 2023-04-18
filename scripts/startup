@@ -110,11 +110,6 @@ def call_buildpack_startup():
     except KeyboardInterrupt:
         logging.debug("Interrupted by keyboard")
 
-def add_uid():
-    logging.info("Adding uid to /etc/passwd")
-    with open('/etc/passwd','a') as passwd_file:
-        passwd_file.write('mendix:x:{uid}:{gid}:mendix user:/opt/mendix/build:/sbin/nologin\n'.format(uid=os.getuid(),gid=os.getgid()))
-
 def get_welcome_header():
     welcome_ascii_header = '''
                               ##        .
@@ -149,6 +144,5 @@ if __name__ == '__main__':
     check_logfilter()
     
     export_encoded_cacertificates()
-    add_uid()
     call_buildpack_startup()
     sys.exit(0)
