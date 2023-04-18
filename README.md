@@ -292,11 +292,13 @@ This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment va
 
 ### Advanced feature: full-build
 
-To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/Dockerfile.rootfs.bionic) Dockerfile. If you want to build the root-fs yourself you can use the following script:
+To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/rootfs-app.dockerfile) Dockerfile. If you want to build the root-fs yourself you can use the following script:
 
 ```
 docker build --build-arg BUILD_PATH=<mendix-project-location> \
-	-t <root-fs-image-tag> -f Dockerfile.rootfs.bionic .
+  -t <builder-root-fs-image-tag> -f rootfs-builder.dockerfile .
+docker build --build-arg BUILD_PATH=<mendix-project-location> \
+  -t <app-root-fs-image-tag> -f rootfs-app.dockerfile .
 ```
 
 After that you can build the target image with the next command:
@@ -306,8 +308,8 @@ docker build
   --build-arg BUILD_PATH=<mendix-project-location> \
   --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
   --build-arg BUILDER_ROOTFS_IMAGE=<builder-root-fs-image-tag> \
+  -t mendix/mendix-buildpack:v1.2 .
 ```
-	-t mendix/mendix-buildpack:v1.2 .
 
 
 ### Industrial Edge Configuration File support

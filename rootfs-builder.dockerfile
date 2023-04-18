@@ -10,10 +10,10 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # install dependencies & remove package lists
-# doesn't include libpq5 python3-distutils libgdiplus
-RUN microdnf update -y && \
+RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm &&\
+    microdnf update -y && \
     microdnf module enable nginx:1.20 -y && \
-    microdnf install -y wget curl glibc-langpack-en python3 openssl tar gzip unzip nginx nginx-mod-stream binutils fontconfig && \
+    microdnf install -y wget curl glibc-langpack-en python3 python3-setuptools openssl libgdiplus tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions

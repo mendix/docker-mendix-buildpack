@@ -3,8 +3,8 @@
 #
 # Author: Mendix Digital Ecosystems, digitalecosystems@mendix.com
 # Version: 2.1.0
-ARG ROOTFS_IMAGE=mendix/rootfs:ubi8
-ARG BUILDER_ROOTFS_IMAGE=mendix/rootfs:bionic
+ARG ROOTFS_IMAGE=mendix-rootfs:app
+ARG BUILDER_ROOTFS_IMAGE=mendix-rootfs:builder
 
 # Build stage
 FROM ${BUILDER_ROOTFS_IMAGE} AS builder
@@ -36,6 +36,7 @@ ARG USER_UID=1001
 # 6. Update permissions of /opt/mendix so that the app can run as a non-root user
 RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     ln -s /root /home/vcap &&\
+    mkdir -p /home/vcap/.local/bin && ln -s /etc/alternatives/pip3 /home/vcap/.local/bin/pip && pip3 install --upgrade pip &&\
     echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
     curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
@@ -57,6 +58,9 @@ ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/o
 
 # Use nginx supplied by the base OS
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
+
+# Skip CF Buildpack's version check
+RUN rm /etc/*-release && echo 'Ubuntu release 18.04 (Bionic)' > /etc/debian-release
 
 # Each comment corresponds to the script line:
 # 1. Create cache directory and directory for dependencies which can be shared
