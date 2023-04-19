@@ -17,8 +17,8 @@ RUN microdnf update -y && \
 
 # Set nginx permissions
 RUN touch /run/nginx.pid && \
-    chown -R 1001:0 /var/log/nginx /var/lib/nginx /run/nginx.pid &&\
-    chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
+    chown -R 1001:0 /var/log/nginx /var/lib/nginx /run &&\
+    chmod -R g=u /var/log/nginx /var/lib/nginx /run
 
 # Set python alias to python3 (required for Datadog)
 RUN alternatives --set python /usr/bin/python3
