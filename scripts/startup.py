@@ -3,12 +3,9 @@ import json
 import logging
 import os
 import re
-import subprocess
-import signal
+import runpy
 import sys
 import base64
-
-STARTUP_PATH = sys.argv[1]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -85,30 +82,11 @@ def check_logfilter():
         logging.warn("LOG_RATELIMIT is set, but the mendix-logfilter binary is missing. Rebuild Docker image with EXCLUDE_LOGFILTER=false to enable log filtering")
         del os.environ['LOG_RATELIMIT']
 
-def sigchld_handler(_signo, _stack_frame):
-    # reap zombies
-    logging.debug("Child process has exited, getting result")
-    (waitpid, result) = os.waitpid(-1, os.WNOHANG)
-    logging.debug("Child process %s has exited with result %s" % (waitpid, result))
-
 def call_buildpack_startup():
     logging.debug("Executing call_buildpack_startup...")
 
-    signal.signal(signal.SIGCHLD, sigchld_handler)
-
-    proc = subprocess.Popen(["python3", STARTUP_PATH], cwd='/opt/mendix/build')
-    
-    # Forward SIGTERM to allow a clean shutdown
-    def sig_forwarder(_signo, _stack_frame):
-        logging.debug("Forwarding SIGTERM to child process")
-        os.kill(proc.pid, _signo)
-    
-    signal.signal(signal.SIGTERM, sig_forwarder)
-
-    try:
-        proc.wait()
-    except KeyboardInterrupt:
-        logging.debug("Interrupted by keyboard")
+    os.chdir('/opt/mendix/build')
+    runpy.run_module("buildpack.start", run_name="__main__")
 
 def get_welcome_header():
     welcome_ascii_header = '''
@@ -145,4 +123,3 @@ if __name__ == '__main__':
     
     export_encoded_cacertificates()
     call_buildpack_startup()
-    sys.exit(0)
