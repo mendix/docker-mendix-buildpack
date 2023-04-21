@@ -2,7 +2,9 @@
 
 ![Test status](https://github.com/mendix/docker-mendix-buildpack/workflows/Test/badge.svg)
 
-The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an example project you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
+The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an **example project** you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
+
+For a supported containerized solution to run Mendix apps in a Kubernetes envrionment, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).
 
 ## Try a sample mendix application
 
@@ -13,9 +15,7 @@ Open a terminal and run the following code:
 ```
 git clone --branch <TAG> --config core.autocrlf=false https://github.com/mendix/docker-mendix-buildpack
 cd docker-mendix-buildpack
-make get-sample
-make build-image
-make run-container
+tests/integrationtest.sh
 ```
 
 You can now open your browser [http://localhost:8080]([http://localhost:8080])
@@ -31,15 +31,48 @@ This project is a goto reference for the following scenarios :
 
 ### Requirements
 
-* Docker 17.05 (Installation [here](https://docs.docker.com/engine/installation/))
+* Docker 20.10 (Installation [here](https://docs.docker.com/engine/installation/))
   * Earlier Docker versions are no longer compatible because they don't support multistage builds.
-    To use Docker versions below 17.05, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](https://github.com/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
+    To use Docker versions below 20.10, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](https://github.com/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
 * For preparing, a local installation of wget (for macOS)
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
+* A Mendix app based on Mendix 7 or a later version
 
 ## Usage
 
-### Compilation
+### Preparation: rootfs
+
+To save build time, the build pack needs a prebuilt rootfs containing the base OS and additional packages.
+This rootfs is based on [Red Hat Universal Base Image 8 minimal](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/building_running_and_managing_containers/index#con_understanding-the-ubi-minimal-images_assembly_types-of-container-images) image.
+
+To build the rootfs, run the following commands
+
+```shell
+docker build --build-arg \
+  -t <builder-root-fs-image-tag> -f rootfs-builder.dockerfile .
+docker build --build-arg  \
+  -t <app-root-fs-image-tag> -f rootfs-app.dockerfile .
+```
+
+The `builder` image contains packages required to build an app; the `app` image contains a reduced package set, containing only packages required to run a Mendix app.
+
+For example:
+
+```shell
+docker build -t mendix-rootfs:app -f rootfs-app.dockerfile .
+docker build -t mendix-rootfs:builder -f rootfs-builder.dockerfile .
+```
+
+This command needs to be done at least once on the builder OS.
+
+To reuse the rootfs image, push it to a private repository:
+
+```shell
+docker push <builder-root-fs-image-tag>
+docker push <app-root-fs-image-tag>
+```
+
+### Compile an app
 
 Before running the container, it is necessary to build the image with your application. This buildpack contains Dockerfile with a script that will compile your application using [cf-mendix-buildpack](https://github.com/mendix/cf-mendix-buildpack/).
 
@@ -55,9 +88,9 @@ docker build
 For build you can provide next arguments:
 
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
-- **ROOTFS_IMAGE** is a type of rootfs image. Defaults to `mendix/rootfs:ubi8` (Red Hat Universal Base Image 8). To use Ubuntu 18.04, change this to `mendix/rootfs:bionic`. It's also possible to use a custom rootfs image as described in [Advanced feature: full-build](#advanced-feature-full-build).
-- **BUILDER_ROOTFS_IMAGE** is a type of rootfs image used for downloading the Mendix app dependencies and compiling the Mendix app from source. Defaults to `mendix/rootfs:bionic`. It's also possible to use a custom rootfs image as described in [Advanced feature: full-build](#advanced-feature-full-build).
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.30.14`. For stable pipelines, it's recommended to use a fixed version from **v4.30.14** and later. CloudFoundry buildpack versions below **v4.30.14** are not supported.
+- **ROOTFS_IMAGE** is a type of rootfs image. Defaults to `mendix-rootfs:app` (a locally prebuilt image).
+- **BUILDER_ROOTFS_IMAGE** is a type of rootfs image used for downloading the Mendix app dependencies and compiling the Mendix app from source. Defaults to `mendix-rootfs:builder` (a locally prebuilt image).
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.30.17`. For stable pipelines, it's recommended to use a fixed version from **v4.30.17** and later. CloudFoundry buildpack versions below **v4.30.17** are not supported.
 - **EXCLUDE_LOGFILTER** will exclude the `mendix-logfilter` binary from the resulting Docker image if set to `true`. Defaults to `true`. Excluding `mendix-logfilter` will reduce the image size and remove a component that's not commonly used; the `LOG_RATELIMIT` environment variable option will be disabled.
 - **CF_BUILDPACK_URL** specifies the URL where the CF buildpack should be downloaded from (for example, a local mirror). Defaults to `https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip`. Specifying **CF_BUILDPACK_URL** will override the version from **CF_BUILDPACK**.
 - **BLOBSTORE** can be used to specify an alternative buildpack resource server (instead of the default Mendix CDN). For more information, see the [CF Buildpack offline settings](https://github.com/mendix/cf-mendix-buildpack#offline-buildpack-settings).
@@ -189,7 +222,7 @@ environment:
 
 ### Configuring Custom Runtime Settings
 
-To configure any of the advanced [Custom Runtime Settings](https://world.mendix.com/display/refguide6/Custom+Settings) you can use setting name prefixed with `MXRUNTIME_` as an environment variable.
+To configure any of the advanced [Custom Runtime Settings](https://docs.mendix.com/refguide/custom-settings/) you can use setting name prefixed with `MXRUNTIME_` as an environment variable.
 
 For example, to configure the ConnectionPoolingMinIdle setting to value 10, you can set the following environment variable:
 
@@ -289,27 +322,6 @@ In case your environment does not support multi-line environment variables, a Ba
 
 This string should be set into the CERTIFICATE_AUTHORITIES_BASE64 environment variable.
 
-### Advanced feature: full-build
-
-To save build time, the build pack will normally use a pre-built rootfs from Docker Hub. This rootfs is prepared nightly by Mendix using [this](https://github.com/mendix/docker-mendix-buildpack/blob/master/rootfs-app.dockerfile) Dockerfile. If you want to build the root-fs yourself you can use the following script:
-
-```
-docker build --build-arg BUILD_PATH=<mendix-project-location> \
-  -t <builder-root-fs-image-tag> -f rootfs-builder.dockerfile .
-docker build --build-arg BUILD_PATH=<mendix-project-location> \
-  -t <app-root-fs-image-tag> -f rootfs-app.dockerfile .
-```
-
-After that you can build the target image with the next command:
-
-```
-docker build 
-  --build-arg BUILD_PATH=<mendix-project-location> \
-  --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
-  --build-arg BUILDER_ROOTFS_IMAGE=<builder-root-fs-image-tag> \
-  -t mendix/mendix-buildpack:v1.2 .
-```
-
 
 ### Industrial Edge Configuration File support
 
@@ -350,11 +362,11 @@ Contributions are welcomed:
 
 This was built with the following:
 
-* Docker version 18.06.3
+* Docker version 20.10
 
 ### Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/mendix/IBM-Watson-Connector-Kit/tags).
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/mendix/docker-mendix-buildpack/tags).
 
 ## License
 
