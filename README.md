@@ -43,7 +43,7 @@ This project is a goto reference for the following scenarios :
 ### Preparation: rootfs
 
 To save build time, the build pack needs a prebuilt rootfs containing the base OS and additional packages.
-This rootfs is based on [Red Hat Universal Base Image 8 minimal](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/building_running_and_managing_containers/index#con_understanding-the-ubi-minimal-images_assembly_types-of-container-images) image.
+This rootfs is based on [Red Hat Universal Base Image 8 minimal](https://developers.redhat.com/articles/ubi-faq) image.
 
 To build the rootfs, run the following commands
 
@@ -64,6 +64,8 @@ docker build -t mendix-rootfs:builder -f rootfs-builder.dockerfile .
 ```
 
 This command needs to be done at least once on the builder OS.
+
+Building images on a licensed RHEL host will enable access to additional packages and Red Hat support.
 
 To reuse the rootfs image, push it to a private repository:
 
