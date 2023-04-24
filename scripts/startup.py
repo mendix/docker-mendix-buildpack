@@ -108,6 +108,8 @@ def get_welcome_header():
 
                                 digitalecosystems@mendix.com
 
+    For a supported containerized solution to run Mendix
+    apps in Kubernetes, see Mendix for Private Cloud.
 
     '''
     return welcome_ascii_header
