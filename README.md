@@ -79,11 +79,8 @@ docker push <app-root-fs-image-tag>
 Before running the container, it is necessary to build the image with your application. This buildpack contains Dockerfile with a script that will compile your application using [cf-mendix-buildpack](https://github.com/mendix/cf-mendix-buildpack/).
 
 ```
-docker build 
+docker build \
   --build-arg BUILD_PATH=<mendix-project-location> \
-  --build-arg ROOTFS_IMAGE=<root-fs-image-tag> \
-  --build-arg BUILDER_ROOTFS_IMAGE=<root-fs-image-tag> \
-  --build-arg CF_BUILDPACK=<cf-buildpack-version> \
   --tag mendix/mendix-buildpack:v1.2 .
 ```
 

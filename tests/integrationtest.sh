@@ -3,7 +3,7 @@ set -eux
 docker version
 docker-compose version
 
-echo "Downwloading test project"
+echo "Downloading test project"
 mkdir -p downloads build
 wget https://s3-eu-west-1.amazonaws.com/mx-buildpack-ci/BuildpackTestApp-mx-7-16.mda -O downloads/application.mpk
 unzip downloads/application.mpk -d build/
