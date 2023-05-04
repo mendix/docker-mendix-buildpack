@@ -34,7 +34,7 @@ This project is a goto reference for the following scenarios :
 * Docker 20.10 (Installation [here](https://docs.docker.com/engine/installation/))
   * Earlier Docker versions are no longer compatible because they don't support multistage builds.
     To use Docker versions below 20.10, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](https://github.com/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
-* For preparing, a local installation of wget (for macOS)
+* For preparing, a local installation of `curl`
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
 * A Mendix app based on Mendix 7 or a later version
 
@@ -48,10 +48,8 @@ This rootfs is based on [Red Hat Universal Base Image 8 minimal](https://develop
 To build the rootfs, run the following commands
 
 ```shell
-docker build --build-arg \
-  -t <builder-root-fs-image-tag> -f rootfs-builder.dockerfile .
-docker build --build-arg  \
-  -t <app-root-fs-image-tag> -f rootfs-app.dockerfile .
+docker build -t <builder-root-fs-image-tag> -f rootfs-builder.dockerfile .
+docker build -t <app-root-fs-image-tag> -f rootfs-app.dockerfile .
 ```
 
 The `builder` image contains packages required to build an app; the `app` image contains a reduced package set, containing only packages required to run a Mendix app.

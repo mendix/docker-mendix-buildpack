@@ -5,7 +5,7 @@ docker-compose version
 
 echo "Downloading test project"
 mkdir -p downloads build
-wget https://s3-eu-west-1.amazonaws.com/mx-buildpack-ci/BuildpackTestApp-mx-7-16.mda -O downloads/application.mpk
+curl -L https://s3-eu-west-1.amazonaws.com/mx-buildpack-ci/BuildpackTestApp-mx-7-16.mda -o downloads/application.mpk
 unzip downloads/application.mpk -d build/
 
 echo "Building app rootfs"
