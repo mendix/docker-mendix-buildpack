@@ -4,7 +4,7 @@
 
 The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an **example project** you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
-For a supported containerized solution to run Mendix apps in a Kubernetes envrionment, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).
+For a Kubernetes native solution to run Mendix apps, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).
 
 ## Try a sample mendix application
 
@@ -19,6 +19,12 @@ tests/integrationtest.sh
 ```
 
 You can now open your browser [http://localhost:8080]([http://localhost:8080])
+
+### Scanning for vulnerabilities
+
+If you would like to run a vulnerability scanner (to get a baseline security score), please use the latest, LTS or MTS version of Mendix.
+
+Security patches are only available in the latest version of Mendix, and running a security scan on an outdated version might show CVEs that are already patched in the latest version.
 
 ## Uses cases scenarios:
 
