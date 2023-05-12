@@ -4,6 +4,8 @@
 
 The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an **example project** you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
+**⚠️ Warning** If your pipeline is based on Docker Buildpack V4 or an earlier version, see the [upgrading from Docker Buildpack v4](upgrading-from-v4.md) document. To use Docker Buildpack v5, some changes will be required in your build process.
+
 For a Kubernetes native solution to run Mendix apps, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).
 
 ## Try a sample mendix application
