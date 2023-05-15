@@ -14,7 +14,7 @@ In the past, Docker Buildpack offered two types of rootfs images: `bionic` and `
 
 With Docker Buildpack v5, all images are now based on ubi8-minimal:
 
-* `app` images contain only components that are required to run an app. These images exclude any components that are only required during the build phase - reducing the image size and excluding components that could increase the number of unpatched CVEs in the final image
+* `app` images contain only components that are required to run an app. Build-time components such as `tar`, compilers or Mono prerequisites are excluded - reducing the image size and excluding components that could increase the number of unpatched CVEs in the final image
 * `builder` images contain additional components that are only required when compiling a Mendix app.
 
 You will need to update your pipelines to build these prerequisite images and (optionally) push them to your private registry.
