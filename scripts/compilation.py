@@ -2,18 +2,12 @@
 import json
 import logging
 import os
-import subprocess
+import runpy
 import sys
 import shutil
 
 from buildpack import util
 from buildpack.core import java, runtime
-from buildpack.stage import DOT_LOCAL_LOCATION
-
-BUILD_PATH = sys.argv[1]
-CACHE_PATH = sys.argv[2]
-DEPS_DIR = sys.argv[3]
-DEPS_IDX = sys.argv[4]
 
 logging.basicConfig(
     level=logging.INFO,
@@ -37,7 +31,7 @@ def export_vcap_services():
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
-    return subprocess.check_call(["/opt/mendix/buildpack/buildpack/stage.py", BUILD_PATH, CACHE_PATH, DEPS_DIR, DEPS_IDX])
+    return runpy.run_module("buildpack.stage", run_name="__main__")
 
 def fix_logfilter():
     exclude_logfilter = os.getenv("EXCLUDE_LOGFILTER", "true").lower() == "true"
@@ -47,14 +41,16 @@ def fix_logfilter():
     else:
         os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
 
-def make_dependencies_reusable():
+def make_dependencies_reusable(compilation_globals):
     logging.info("Making dependencies reusable...")
+    dot_local_location = compilation_globals["DOT_LOCAL_LOCATION"]
+    build_path = compilation_globals["BUILD_DIR"]
     shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
     shutil.move("/opt/mendix/build/.local/usr", "/var/mendix/build/.local/")
     # separate cacerts from reusable jre components
-    jre = java._get_java_dependency(java.get_java_major_version(runtime.get_runtime_version(BUILD_PATH)), 'jre')
+    jre = java._get_java_dependency(java.get_java_major_version(runtime.get_runtime_version(build_path)), 'jre')
     jvm_location_reusable = os.path.join("/var/mendix/build/.local/", java._compose_jvm_target_dir(jre))
-    jvm_location_customized = os.path.join(DOT_LOCAL_LOCATION, java._compose_jvm_target_dir(jre))
+    jvm_location_customized = os.path.join(dot_local_location, java._compose_jvm_target_dir(jre))
     cacerts_file_source = os.path.join(jvm_location_reusable, "lib", "security", "cacerts")
     cacerts_file_target = os.path.join(jvm_location_customized, "lib", "security", "cacerts")
     util.mkdir_p(os.path.dirname(cacerts_file_target))
@@ -64,8 +60,6 @@ if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
-    exit_code = call_buildpack_compilation()
-    if exit_code != 0:
-        sys.exit(exit_code)
+    compilation_globals = call_buildpack_compilation()
     fix_logfilter()
-    make_dependencies_reusable()
+    make_dependencies_reusable(compilation_globals)
