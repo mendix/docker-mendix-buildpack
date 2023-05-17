@@ -1,3 +1,6 @@
+**🚨⚠️🚧 Warning** The `master` branch is a legacy branch intended for backwards compatibility with existing CI/CD pipelines.
+To get the latest supported version, please use the [latest](https://github.com/mendix/docker-mendix-buildpack/tree/latest) branch instead.
+
 # Docker Mendix Buildpack
 
 ![Test status](https://github.com/mendix/docker-mendix-buildpack/workflows/Test/badge.svg)
@@ -8,7 +11,7 @@ The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an example proj
 
 Open a terminal and run the following code:
 
-> Important note: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
+> **🚨⚠️🚧 Important note**: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
 
 ```
 git clone --branch <TAG> --config core.autocrlf=false https://github.com/mendix/docker-mendix-buildpack
