@@ -4,9 +4,9 @@ name: Test
 
 on:
   push:
-    branches: [ master ]
+    branches: [ latest ]
   pull_request:
-    branches: [ master ]
+    branches: [ latest ]
 
 jobs:
 

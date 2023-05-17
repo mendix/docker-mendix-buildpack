@@ -12,7 +12,7 @@ For a Kubernetes native solution to run Mendix apps, see [Mendix for Private Clo
 
 Open a terminal and run the following code:
 
-> Important note: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
+> **🚨⚠️🚧 Important note**: always provide `<TAG>` value to guarantee consistent builds. List of tags is available [here](https://github.com/mendix/docker-mendix-buildpack/tags).
 
 ```
 git clone --branch <TAG> --config core.autocrlf=false https://github.com/mendix/docker-mendix-buildpack
