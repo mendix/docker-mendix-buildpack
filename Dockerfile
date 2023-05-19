@@ -15,7 +15,9 @@ ARG DD_API_KEY
 # CF buildpack version
 ARG CF_BUILDPACK=v4.30.20
 # CF buildpack download URL
-ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
+# ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
+# Temporary workaround, remove before release
+ARG CF_BUILDPACK_URL=https://github.com/jpastoor/cf-mendix-buildpack/archive/refs/heads/UPV4-2789_cflinuxfs4.zip
 
 # Exclude the logfilter binary by default
 ARG EXCLUDE_LOGFILTER=true
@@ -40,6 +42,8 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
     curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
+    # Temporary workaround, remove before release
+    (mv /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4/* /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4/.* /opt/mendix/buildpack/ || true) && rmdir /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4 &&\
     rm /tmp/cf-mendix-buildpack.zip &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R g=u /opt/mendix
