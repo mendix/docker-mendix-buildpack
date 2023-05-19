@@ -4,6 +4,7 @@ Docker Buildpack v5 contains some breaking changes and will require some changes
 
 * rootfs images are no longer published to Docker Hub.
 * rootfs images are now based on [Red Hat Universal Base Image 8 minimal](https://developers.redhat.com/articles/ubi-faq) image.
+* CF Buildpack is packaged directly into the build image.
 
 ## Building rootfs images
 
@@ -15,7 +16,7 @@ In the past, Docker Buildpack offered two types of rootfs images: `bionic` and `
 With Docker Buildpack v5, all images are now based on ubi8-minimal:
 
 * `app` images contain only components that are required to run an app. Build-time components such as `tar`, compilers or Mono prerequisites are excluded - reducing the image size and excluding components that could increase the number of unpatched CVEs in the final image
-* `builder` images contain additional components that are only required when compiling a Mendix app.
+* `builder` images contain CF Buildpack and additional components that are only required when compiling a Mendix app.
 
 You will need to update your pipelines to build these prerequisite images and (optionally) push them to your private registry.
 
@@ -32,6 +33,7 @@ In this case, your build pipeline needs to be adjusted:
    docker build -t mendix-rootfs:builder -f rootfs-builder.dockerfile .
    ```
 2. When building the Mendix app itself, use the default values for `ROOTFS_IMAGE` and `BUILDER_ROOTFS_IMAGE` (remove any custom `--build-arg ROOTFS_IMAGE=...` and `--build-arg BUILDER_ROOTFS_IMAGE=...` arguments from the `docker build` command)
+3. If you need to use a specific version of CF Buildpack via `CF_BUILDPACK` or `CF_BUILDPACK_URL` arguments, these arguments should be specified when building the `rootfs-builder.dockerfile` image, **not** your app image.
 
 ### Option 2: build rootfs images centrally
 
@@ -55,6 +57,7 @@ In this case, you need to make the following changes in your CI/CD process:
    --build-arg BUILDER_ROOTFS_IMAGE={your-private-registry}/mendix-rootfs:builder \
    --tag {your-private-registry}/my-app:latest .
    ```
+3. If you need to use a specific version of CF Buildpack via `CF_BUILDPACK` or `CF_BUILDPACK_URL` arguments, these arguments should be specified when building the `rootfs-builder.dockerfile` image, **not** your app image.
 
 ## Migrating from Ubuntu to Red Hat UBI
 

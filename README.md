@@ -80,6 +80,12 @@ docker push <builder-root-fs-image-tag>
 docker push <app-root-fs-image-tag>
 ```
 
+When building the the `rootfs-builder.dockerfile` file, you can provide the following additional arguments:
+
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.30.19`. For stable pipelines, it's recommended to use a fixed version from **v4.30.17** and later. CloudFoundry buildpack versions below **v4.30.19** are not supported.
+- **CF_BUILDPACK_URL** specifies the URL where the CF buildpack should be downloaded from (for example, a local mirror). Defaults to `https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip`. Specifying **CF_BUILDPACK_URL** will override the version from **CF_BUILDPACK**.
+- **BUILDPACK_XTRACE** can be used to enable CF Buildpack [debug logging](https://github.com/mendix/cf-mendix-buildpack#logging-and-debugging). Set this variable to `true` to enable debug logging.
+
 ### Compile an app
 
 Before running the container, it is necessary to build the image with your application. This buildpack contains Dockerfile with a script that will compile your application using [cf-mendix-buildpack](https://github.com/mendix/cf-mendix-buildpack/).
@@ -95,9 +101,7 @@ For build you can provide next arguments:
 - **BUILD_PATH** indicates where the application model is located. It is a root directory of an unzipped .MDA or .MPK file. In the latter case, this is the directory where your .MPR file is located. Must be within [build context](https://docs.docker.com/engine/reference/commandline/build/#extended-description). Defaults to `./project`.
 - **ROOTFS_IMAGE** is a type of rootfs image. Defaults to `mendix-rootfs:app` (a locally prebuilt image).
 - **BUILDER_ROOTFS_IMAGE** is a type of rootfs image used for downloading the Mendix app dependencies and compiling the Mendix app from source. Defaults to `mendix-rootfs:builder` (a locally prebuilt image).
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.30.17`. For stable pipelines, it's recommended to use a fixed version from **v4.30.17** and later. CloudFoundry buildpack versions below **v4.30.17** are not supported.
 - **EXCLUDE_LOGFILTER** will exclude the `mendix-logfilter` binary from the resulting Docker image if set to `true`. Defaults to `true`. Excluding `mendix-logfilter` will reduce the image size and remove a component that's not commonly used; the `LOG_RATELIMIT` environment variable option will be disabled.
-- **CF_BUILDPACK_URL** specifies the URL where the CF buildpack should be downloaded from (for example, a local mirror). Defaults to `https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip`. Specifying **CF_BUILDPACK_URL** will override the version from **CF_BUILDPACK**.
 - **BLOBSTORE** can be used to specify an alternative buildpack resource server (instead of the default Mendix CDN). For more information, see the [CF Buildpack offline settings](https://github.com/mendix/cf-mendix-buildpack#offline-buildpack-settings).
 - **BUILDPACK_XTRACE** can be used to enable CF Buildpack [debug logging](https://github.com/mendix/cf-mendix-buildpack#logging-and-debugging). Set this variable to `true` to enable debug logging.
 
