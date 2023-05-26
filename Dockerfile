@@ -80,12 +80,6 @@ RUN chmod +rx /opt/mendix/build/startup.py &&\
 
 USER ${USER_UID}
 
-# Copy jre from build container
-COPY --from=builder /var/mendix/build/.local/usr /opt/mendix/build/.local/usr
-
-# Copy Mendix Runtime from build container
-COPY --from=builder /var/mendix/build/runtimes /opt/mendix/build/runtimes
-
 # Copy build artifacts from build container
 COPY --from=builder /opt/mendix /opt/mendix
 
