@@ -23,11 +23,15 @@ ENV USER_UID=${USER_UID}
 # Allow specification of debugging options
 ARG BUILDPACK_XTRACE
 
+# Add mono repo
+COPY --chown=0:0 scripts/mono/xamarin.gpg /etc/pki/rpm-gpg/RPM-GPG-KEY-mono-centos8-stable
+COPY --chown=0:0 scripts/mono/mono-centos8-stable.repo /etc/yum.repos.d/mono-centos8-stable.repo
+
 # install dependencies & remove package lists
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm &&\
     microdnf update -y && \
     microdnf module enable nginx:1.20 -y && \
-    microdnf install -y wget curl glibc-langpack-en python311 openssl libgdiplus tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig libicu findutils && \
+    microdnf install -y wget curl glibc-langpack-en python311 openssl tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig libicu mono-core-5.20.1.34 libgdiplus0 findutils && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions
@@ -36,7 +40,7 @@ RUN touch /run/nginx.pid && \
     chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
 
 # Pretend to be Ubuntu to bypass CF Buildpack's check
-RUN rm /etc/*-release && printf 'NAME="Ubuntu"\nID=ubuntu\nVersion="18.04 LTS (Bionic Beaver)"\nVERSION_CODENAME=bionic\n' > /etc/os-release
+RUN rm /etc/*-release && printf 'NAME="Ubuntu"\nID=ubuntu\nVersion="22.04 LTS (Jammy Jellyfish)"\nVERSION_CODENAME=jammy\n' > /etc/os-release
 
 # Set python alias to python3 (required for Datadog)
 RUN alternatives --set python /usr/bin/python3

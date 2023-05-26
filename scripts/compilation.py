@@ -5,9 +5,11 @@ import os
 import runpy
 import sys
 import shutil
+import tarfile
 
 from buildpack import util
 from buildpack.core import java, runtime
+from buildpack.util import get_dependency
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,6 +30,24 @@ def export_vcap_services():
 
     os.environ['VCAP_SERVICES'] = vcap_services_str
     os.environ["PATH"] += os.pathsep + "/opt/mendix/buildpack"
+
+def replace_cf_dependencies():
+    logging.debug("Ensuring CF Buildpack dependencies are available")
+    # Only mono 5 is supported by Docker Buildpack
+    # If additional versions are required in the future, install them into separate locations with rpm install --prefix
+    mono_version = get_dependency("mono.5-jammy", "/opt/mendix/buildpack")["version"]
+    logging.debug("Creating symlink for mono {0}".format(mono_version))
+
+    util.mkdir_p("/tmp/buildcache/bust")
+    mono_cache_artifact = f"/tmp/buildcache/bust/mono-{mono_version}-mx-ubuntu-jammy.tar.gz"
+    with tarfile.open(mono_cache_artifact, "w:gz") as tar:
+        # Symlinks to use mono from host OS
+        symlinks = {'mono/bin':'/usr/bin', 'mono/lib': '/usr/lib64', 'mono/etc': '/etc'}
+        for source, destination in symlinks.items():
+            symlink = tarfile.TarInfo(source)
+            symlink.type = tarfile.SYMTYPE
+            symlink.linkname = destination
+            tar.addfile(symlink)
 
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
@@ -60,6 +80,7 @@ if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
+    replace_cf_dependencies()
     compilation_globals = call_buildpack_compilation()
     fix_logfilter()
     make_dependencies_reusable(compilation_globals)

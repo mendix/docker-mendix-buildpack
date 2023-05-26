@@ -1,0 +1,6 @@
+[mono-centos8-stable]
+name=mono-centos8-stable
+baseurl=https://download.mono-project.com/repo/centos8-stable/
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-mono-centos8-stable

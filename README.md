@@ -44,7 +44,7 @@ This project is a goto reference for the following scenarios :
     To use Docker versions below 20.10, download an earlier Mendix Docker Buildpack release, such as [v2.3.2](https://github.com/mendix/docker-mendix-buildpack/releases/tag/v2.3.2)
 * For preparing, a local installation of `curl`
 * For local testing, make sure you can run the [docker-compose command](https://docs.docker.com/compose/install/)
-* A Mendix app based on Mendix 7 or a later version
+* A Mendix app based on Mendix 8 or a later version
 
 ## Usage
 

@@ -5,6 +5,7 @@ Docker Buildpack v5 contains some breaking changes and will require some changes
 * rootfs images are no longer published to Docker Hub.
 * rootfs images are now based on [Red Hat Universal Base Image 8 minimal](https://developers.redhat.com/articles/ubi-faq) image.
 * CF Buildpack is packaged directly into the build image.
+* Mendix 7 and older versions are no longer supported. To use Docker Buildpack v5, upgrade your app to Mendix 8 or a later version.
 
 ## Building rootfs images
 
