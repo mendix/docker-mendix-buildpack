@@ -35,7 +35,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.
     microdnf clean all && rm -rf /var/cache/yum
 
 # Install RHEL alternatives to CF Buildpack dependencies
-RUN microdnf install java-11-openjdk-headless java-11-openjdk-devel mono-core-5.20.1.34 libgdiplus0 libicu && \
+RUN microdnf install -y java-11-openjdk-headless java-11-openjdk-devel mono-core-5.20.1.34 libgdiplus0 libicu && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions
@@ -76,7 +76,7 @@ COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
 RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
     microdnf install -y $PYTHON_BUILD_RPMS && \
     chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache && \
-    microdnf remove $PYTHON_BUILD_RPMS && microdnf clean all && rm -rf /var/cache/yum
+    microdnf remove -y $PYTHON_BUILD_RPMS && microdnf clean all && rm -rf /var/cache/yum
 
 # Add the buildpack modules
 ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.11/site-packages/"
