@@ -104,7 +104,6 @@ For build you can provide next arguments:
 - **EXCLUDE_LOGFILTER** will exclude the `mendix-logfilter` binary from the resulting Docker image if set to `true`. Defaults to `true`. Excluding `mendix-logfilter` will reduce the image size and remove a component that's not commonly used; the `LOG_RATELIMIT` environment variable option will be disabled.
 - **BLOBSTORE** can be used to specify an alternative buildpack resource server (instead of the default Mendix CDN). For more information, see the [CF Buildpack offline settings](https://github.com/mendix/cf-mendix-buildpack#offline-buildpack-settings).
 - **BUILDPACK_XTRACE** can be used to enable CF Buildpack [debug logging](https://github.com/mendix/cf-mendix-buildpack#logging-and-debugging). Set this variable to `true` to enable debug logging.
-- **WRITABLE_ROOT** can be used to specify a custom writable root directory, for example `/tmp`. This can be useful in case the image's root filesystem is read-only.
 
 ### Startup
 

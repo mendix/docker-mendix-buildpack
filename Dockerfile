@@ -20,9 +20,6 @@ ARG EXCLUDE_LOGFILTER=true
 ARG BLOBSTORE
 ARG BUILDPACK_XTRACE
 
-# Specify an alternative writable root directory, such as /tmp or another mountable volume
-ARG WRITABLE_ROOT
-
 # Copy project model/sources
 COPY $BUILD_PATH /opt/mendix/build
 
@@ -35,15 +32,17 @@ ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 # 3. Navigate to buildpack directory
 # 4. Call compilation script
 # 5. Remove temporary files
-# 6. Update ownership of /opt/mendix so that the app can run as a non-root user
-# 7. Update permissions of /opt/mendix so that the app can run as a non-root user
-RUN mkdir -p /tmp/buildcache /tmp/cf-deps &&\
+# 6. Create symlink for java prefs used by CF buildpack
+# 7. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 8. Update permissions of /opt/mendix so that the app can run as a non-root user
+RUN mkdir -p /tmp/buildcache /tmp/cf-deps /var/mendix/build /var/mendix/build/.local &&\
     chmod +rx /opt/mendix/buildpack/compilation.py /opt/mendix/buildpack/git /opt/mendix/buildpack/buildpack/stage.py &&\
     cd /opt/mendix/buildpack &&\
     ./compilation.py /opt/mendix/build /tmp/buildcache /tmp/cf-deps 0 &&\
     rm -fr /tmp/buildcache /tmp/javasdk /tmp/opt /tmp/downloads /opt/mendix/buildpack/compilation.py /opt/mendix/buildpack/git &&\
-    chown -R ${USER_UID}:0 /opt/mendix &&\
-    chmod -R g=u /opt/mendix
+    ln -s /opt/mendix/.java /opt/mendix/build &&\
+    chown -R ${USER_UID}:0 /opt/mendix /var/mendix &&\
+    chmod -R g=u /opt/mendix /var/mendix
 
 FROM ${ROOTFS_IMAGE}
 LABEL Author="Mendix Digital Ecosystems"
@@ -65,11 +64,9 @@ ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/bu
 COPY scripts/startup.py scripts/vcap_application.json /opt/mendix/build/
 
 # Create vcap home directory for Datadog configuration
-RUN mkdir -p /opt/datadog-agent/run /home/vcap &&\
-    chown -R ${USER_UID}:0 /opt/datadog-agent/run &&\
-    ln -s ${HOME} /home/vcap/app &&\
-    chown ${USER_UID}:0 /home/vcap/app &&\
-    chmod -R g=u /opt/datadog-agent/run
+RUN mkdir -p /home/vcap /opt/datadog-agent/run &&\
+    chown -R ${USER_UID}:0 /home/vcap /opt/datadog-agent/run &&\
+    chmod -R g=u /home/vcap /opt/datadog-agent/run
 
 # Each comment corresponds to the script line:
 # 1. Make the startup script executable

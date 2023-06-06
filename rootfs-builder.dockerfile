@@ -68,15 +68,15 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R g=u /opt/mendix
 
+# Copy python scripts which execute the buildpack (exporting the VCAP variables)
+COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
+
 # Install the buildpack Python dependencies
 RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
     microdnf install -y $PYTHON_BUILD_RPMS && \
     rm /opt/mendix/buildpack/vendor/wheels/* && \
     chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache && \
     microdnf remove -y $PYTHON_BUILD_RPMS && microdnf clean all && rm -rf /var/cache/yum
-
-# Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
 
 # Add the buildpack modules
 ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.11/site-packages/"

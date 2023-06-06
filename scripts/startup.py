@@ -6,7 +6,6 @@ import re
 import runpy
 import sys
 import base64
-import shutil
 
 logging.basicConfig(
     level=logging.INFO,
@@ -83,31 +82,6 @@ def check_logfilter():
         logging.warn("LOG_RATELIMIT is set, but the mendix-logfilter binary is missing. Rebuild Docker image with EXCLUDE_LOGFILTER=false to enable log filtering")
         del os.environ['LOG_RATELIMIT']
 
-def create_writable_directories():
-    writable_paths = [
-        '/opt/mendix/build/data/database',
-        '/opt/mendix/build/data/files',
-        '/opt/mendix/build/data/model-upload',
-        '/opt/mendix/build/data/tmp',
-        '/opt/mendix/build/datadog_integrations',
-        '/opt/mendix/build/log',
-        '/opt/mendix/build/.java',
-        '/opt/mendix/build/.m2ee'
-    ]
-    writable_contents_path = '/opt/mendix/writable_contents'
-    if os.path.isdir(writable_contents_path):
-        target = os.path.dirname(os.path.realpath('/opt/mendix/build/.m2ee'))
-        for restore_dir in os.listdir(writable_contents_path):
-            src = os.path.join(writable_contents_path, restore_dir)
-            dest = os.path.join(target, restore_dir)
-            logging.debug("Restoring {0} contents into {1}".format(src, dest))
-            shutil.copytree(src, dest, symlinks=True, ignore_dangling_symlinks=True)
-    for writable_path in writable_paths:
-        real_path = os.path.realpath(writable_path)
-        if os.path.islink(writable_path) and not os.path.exists(real_path):
-            logging.debug("Creating destination {0} for relocated writable directory {1}".format(real_path, writable_path))
-            os.makedirs(real_path)
-
 def call_buildpack_startup():
     logging.debug("Executing call_buildpack_startup...")
 
@@ -150,5 +124,4 @@ if __name__ == '__main__':
     check_logfilter()
     
     export_encoded_cacertificates()
-    create_writable_directories()
     call_buildpack_startup()
