@@ -10,11 +10,9 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # CF buildpack version
-ARG CF_BUILDPACK=v4.30.19
+ARG CF_BUILDPACK=v5.0.0
 # CF buildpack download URL
-# ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
-# Temporary workaround, remove before release
-ARG CF_BUILDPACK_URL=https://github.com/jpastoor/cf-mendix-buildpack/archive/refs/heads/UPV4-2789_cflinuxfs4.zip
+ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
 # Set the user ID
 ARG USER_UID=1001
@@ -51,6 +49,9 @@ RUN alternatives --set python /usr/bin/python3
 
 # Download and prepare CF Buildpack
 
+# Switch CF Buildpack to use Python 3.10+ compatibility
+ENV CF_STACK cflinuxfs4
+
 # Each comment corresponds to the script line:
 # 1. Create all directories needed by scripts
 # 2. Download CF buildpack
@@ -63,8 +64,6 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
     curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
     python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
-    # Temporary workaround, remove before release
-    (mv /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4/* /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4/.* /opt/mendix/buildpack/ || true) && rmdir /opt/mendix/buildpack/cf-mendix-buildpack-UPV4-2789_cflinuxfs4 &&\
     rm /tmp/cf-mendix-buildpack.zip &&\
     chown -R ${USER_UID}:0 /opt/mendix &&\
     chmod -R g=u /opt/mendix
@@ -72,6 +71,7 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
 # Install the buildpack Python dependencies
 RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
     microdnf install -y $PYTHON_BUILD_RPMS && \
+    rm /opt/mendix/buildpack/vendor/wheels/* && \
     chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache && \
     microdnf remove -y $PYTHON_BUILD_RPMS && microdnf clean all && rm -rf /var/cache/yum
 

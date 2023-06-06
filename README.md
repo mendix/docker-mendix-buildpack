@@ -82,7 +82,7 @@ docker push <app-root-fs-image-tag>
 
 When building the the `rootfs-builder.dockerfile` file, you can provide the following additional arguments:
 
-- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v4.30.19`. For stable pipelines, it's recommended to use a fixed version from **v4.30.17** and later. CloudFoundry buildpack versions below **v4.30.19** are not supported.
+- **CF_BUILDPACK** is a version of CloudFoundry buildpack. Defaults to `v5.0.0`. For stable pipelines, it's recommended to use a fixed **v5.0.0** version. Other Cloud Foundry buildpacks might not work with this version of Docker Buildpack.
 - **CF_BUILDPACK_URL** specifies the URL where the CF buildpack should be downloaded from (for example, a local mirror). Defaults to `https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip`. Specifying **CF_BUILDPACK_URL** will override the version from **CF_BUILDPACK**.
 - **BUILDPACK_XTRACE** can be used to enable CF Buildpack [debug logging](https://github.com/mendix/cf-mendix-buildpack#logging-and-debugging). Set this variable to `true` to enable debug logging.
 
