@@ -9,11 +9,31 @@ LABEL maintainer="digitalecosystems@mendix.com"
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
+# CF buildpack version
+ARG CF_BUILDPACK=v5.0.0
+# CF buildpack download URL
+ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
+
+# Set the user ID
+ARG USER_UID=1001
+ENV USER_UID=${USER_UID}
+
+# Allow specification of debugging options
+ARG BUILDPACK_XTRACE
+
+# Add mono repo
+COPY --chown=0:0 scripts/mono/xamarin.gpg /etc/pki/rpm-gpg/RPM-GPG-KEY-mono-centos8-stable
+COPY --chown=0:0 scripts/mono/mono-centos8-stable.repo /etc/yum.repos.d/mono-centos8-stable.repo
+
 # install dependencies & remove package lists
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm &&\
     microdnf update -y && \
     microdnf module enable nginx:1.20 -y && \
-    microdnf install -y wget curl glibc-langpack-en python3 python3-setuptools openssl libgdiplus tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig libicu findutils && \
+    microdnf install -y wget curl glibc-langpack-en python311 openssl tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig findutils && \
+    microdnf clean all && rm -rf /var/cache/yum
+
+# Install RHEL alternatives to CF Buildpack dependencies
+RUN microdnf install -y java-11-openjdk-headless java-11-openjdk-devel mono-core-5.20.1.34 libgdiplus0 libicu && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions
@@ -22,8 +42,41 @@ RUN touch /run/nginx.pid && \
     chmod -R g=u /var/log/nginx /var/lib/nginx /run/nginx.pid
 
 # Pretend to be Ubuntu to bypass CF Buildpack's check
-RUN rm /etc/*-release && echo 'Ubuntu release 18.04 (Bionic)' > /etc/debian-release
+RUN rm /etc/*-release && printf 'NAME="Ubuntu"\nID=ubuntu\nVersion="22.04 LTS (Jammy Jellyfish)"\nVERSION_CODENAME=jammy\n' > /etc/os-release
 
 # Set python alias to python3 (required for Datadog)
 RUN alternatives --set python /usr/bin/python3
 
+# Download and prepare CF Buildpack
+
+# Switch CF Buildpack to use Python 3.10+ compatibility
+ENV CF_STACK cflinuxfs4
+
+# Each comment corresponds to the script line:
+# 1. Create all directories needed by scripts
+# 2. Download CF buildpack
+# 3. Extract CF buildpack
+# 4. Delete CF buildpack zip archive
+# 5. Update ownership of /opt/mendix so that the app can run as a non-root user
+# 6. Update permissions of /opt/mendix so that the app can run as a non-root user
+RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
+    ln -s /root /home/vcap &&\
+    echo "Downloading CF Buildpack from ${CF_BUILDPACK_URL}" &&\
+    curl -fsSL ${CF_BUILDPACK_URL} -o /tmp/cf-mendix-buildpack.zip && \
+    python3 -m zipfile -e /tmp/cf-mendix-buildpack.zip /opt/mendix/buildpack/ &&\
+    rm /tmp/cf-mendix-buildpack.zip &&\
+    chown -R ${USER_UID}:0 /opt/mendix &&\
+    chmod -R g=u /opt/mendix
+
+# Copy python scripts which execute the buildpack (exporting the VCAP variables)
+COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
+
+# Install the buildpack Python dependencies
+RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
+    microdnf install -y $PYTHON_BUILD_RPMS && \
+    rm /opt/mendix/buildpack/vendor/wheels/* && \
+    chmod +rx /opt/mendix/buildpack/bin/bootstrap-python && /opt/mendix/buildpack/bin/bootstrap-python /opt/mendix/buildpack /tmp/buildcache && \
+    microdnf remove -y $PYTHON_BUILD_RPMS && microdnf clean all && rm -rf /var/cache/yum
+
+# Add the buildpack modules
+ENV PYTHONPATH "$PYTHONPATH:/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.11/site-packages/"

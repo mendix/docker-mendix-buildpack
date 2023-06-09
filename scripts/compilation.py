@@ -5,9 +5,11 @@ import os
 import runpy
 import sys
 import shutil
+import tarfile
 
 from buildpack import util
 from buildpack.core import java, runtime
+from buildpack.util import get_dependency
 
 logging.basicConfig(
     level=logging.INFO,
@@ -29,6 +31,50 @@ def export_vcap_services():
     os.environ['VCAP_SERVICES'] = vcap_services_str
     os.environ["PATH"] += os.pathsep + "/opt/mendix/buildpack"
 
+def replace_cf_dependencies():
+    logging.debug("Ensuring CF Buildpack dependencies are available")
+
+    # Only mono 5 is supported by Docker Buildpack
+    mono_dependency = get_dependency("mono.5-jammy", "/opt/mendix/buildpack")
+    logging.debug("Creating symlink for mono {0}".format(mono_dependency['artifact']))
+
+    util.mkdir_p("/tmp/buildcache/bust")
+    mono_cache_artifact = f"/tmp/buildcache/bust/mono-{mono_dependency['version']}-mx-ubuntu-jammy.tar.gz"
+    with tarfile.open(mono_cache_artifact, "w:gz") as tar:
+        # Symlinks to use mono from host OS
+        symlinks = {'mono/bin':'/usr/bin', 'mono/lib': '/usr/lib64', 'mono/etc': '/etc'}
+        for source, destination in symlinks.items():
+            symlink = tarfile.TarInfo(source)
+            symlink.type = tarfile.SYMTYPE
+            symlink.linkname = destination
+            tar.addfile(symlink)
+
+    # Only JDK 11 is supported by Docker Buildpack
+    jdk_dependency = get_dependency("java.11-jdk", "/opt/mendix/buildpack")
+    logging.debug("Creating symlink for jdk {0}".format(jdk_dependency['artifact']))
+    jdk_cache_artifact = f"/tmp/buildcache/bust/{jdk_dependency['artifact']}"
+    jdk_destination = '/etc/alternatives/java_sdk_11'
+    with tarfile.open(jdk_cache_artifact, "w:gz") as tar:
+        # Symlinks to use jdk from host OS
+        for jdk_dir in os.listdir(jdk_destination):
+            symlink = tarfile.TarInfo(f"jdk/{jdk_dir}")
+            symlink.type = tarfile.SYMTYPE
+            symlink.linkname = f"{jdk_destination}/{jdk_dir}"
+            tar.addfile(symlink)
+
+    # Only JRE 11 is supported by Docker Buildpack
+    jre_dependency = get_dependency("java.11-jre", "/opt/mendix/buildpack")
+    logging.debug("Creating symlink for jre {0}".format(jre_dependency['artifact']))
+    jre_cache_artifact = f"/tmp/buildcache/bust/{jre_dependency['artifact']}"
+    jre_destination = '/etc/alternatives/jre_11'
+    with tarfile.open(jre_cache_artifact, "w:gz") as tar:
+        # Symlinks to use jre from host OS
+        for jre_dir in os.listdir(jre_destination):
+            symlink = tarfile.TarInfo(f"jre/{jre_dir}")
+            symlink.type = tarfile.SYMTYPE
+            symlink.linkname = f"{jre_destination}/{jre_dir}"
+            tar.addfile(symlink)
+
 def call_buildpack_compilation():
     logging.debug("Executing call_buildpack_compilation...")
     return runpy.run_module("buildpack.stage", run_name="__main__")
@@ -41,25 +87,10 @@ def fix_logfilter():
     else:
         os.chmod("/opt/mendix/build/.local/mendix-logfilter/mendix-logfilter", 0o0755)
 
-def make_dependencies_reusable(compilation_globals):
-    logging.info("Making dependencies reusable...")
-    dot_local_location = compilation_globals["DOT_LOCAL_LOCATION"]
-    build_path = compilation_globals["BUILD_DIR"]
-    shutil.move("/opt/mendix/build/runtimes", "/var/mendix/build/")
-    shutil.move("/opt/mendix/build/.local/usr", "/var/mendix/build/.local/")
-    # separate cacerts from reusable jre components
-    jre = java._get_java_dependency(java.get_java_major_version(runtime.get_runtime_version(build_path)), 'jre')
-    jvm_location_reusable = os.path.join("/var/mendix/build/.local/", java._compose_jvm_target_dir(jre))
-    jvm_location_customized = os.path.join(dot_local_location, java._compose_jvm_target_dir(jre))
-    cacerts_file_source = os.path.join(jvm_location_reusable, "lib", "security", "cacerts")
-    cacerts_file_target = os.path.join(jvm_location_customized, "lib", "security", "cacerts")
-    util.mkdir_p(os.path.dirname(cacerts_file_target))
-    os.rename(cacerts_file_source, cacerts_file_target)
-
 if __name__ == '__main__':
     logging.info("Mendix project compilation phase...")
 
     export_vcap_services()
+    replace_cf_dependencies()
     compilation_globals = call_buildpack_compilation()
     fix_logfilter()
-    make_dependencies_reusable(compilation_globals)
