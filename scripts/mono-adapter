@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# This script works as a drop-in replacement for mono and allows using non-mono mxbuild in CF Buildpack.
+# It's a temporary workaround until https://github.com/mendix/cf-mendix-buildpack/pull/661 is available in CF Buildpack v5.
+
+MONO_ARGS=()
+# Rewrite the command to exclude mono and its args, only keep mxbuild
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    *mxbuild.exe)
+      # Remove .exe from mxbuild executable name
+      MONO_ARGS=(${1%.*})
+      shift
+      ;;
+    *)
+      # Keep all args after mxbuild
+      if [ -n "$MONO_ARGS" ]; then
+        MONO_ARGS+=("$1")
+      fi
+      shift
+      ;;
+  esac
+done
+
+echo "Launching MxBuild through mono adapter..."
+
+exec "${MONO_ARGS[@]}"

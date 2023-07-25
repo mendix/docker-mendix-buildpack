@@ -34,6 +34,9 @@ def export_vcap_services():
 def replace_cf_dependencies():
     logging.debug("Ensuring CF Buildpack dependencies are available")
 
+    mx_version = runtime.get_runtime_version("/opt/mendix/build")
+    logging.debug("Detected Mendix version {0}".format(mx_version))
+
     # Only mono 5 is supported by Docker Buildpack
     mono_dependency = get_dependency("mono.5-jammy", "/opt/mendix/buildpack")
     logging.debug("Creating symlink for mono {0}".format(mono_dependency['artifact']))
@@ -41,8 +44,12 @@ def replace_cf_dependencies():
     util.mkdir_p("/tmp/buildcache/bust")
     mono_cache_artifact = f"/tmp/buildcache/bust/mono-{mono_dependency['version']}-mx-ubuntu-jammy.tar.gz"
     with tarfile.open(mono_cache_artifact, "w:gz") as tar:
-        # Symlinks to use mono from host OS
-        symlinks = {'mono/bin':'/usr/bin', 'mono/lib': '/usr/lib64', 'mono/etc': '/etc'}
+        if mx_version.major >= 10:
+            # Mono is not needed for Mendix 10, use the bash adapter script
+            symlinks = {'mono/bin/mono':'/opt/mendix/buildpack/mono-adapter', 'mono/lib': '/usr/lib64'}
+        else:
+            # Symlinks to use mono from host OS
+            symlinks = {'mono/bin':'/usr/bin', 'mono/lib': '/usr/lib64', 'mono/etc': '/etc'}
         for source, destination in symlinks.items():
             symlink = tarfile.TarInfo(source)
             symlink.type = tarfile.SYMTYPE

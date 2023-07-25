@@ -4,8 +4,6 @@
 
 The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an **example project** you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
-**⚠️ Warning** At this time, Docker Buildpack doesn't support building Mendix 10 MPK files. To deploy a Mendix 10 app with Docker Buildpack, you will need to build the MDA file first (using Studio Pro 10 or [MxBuild](https://docs.mendix.com/refguide/mxbuild/)), and deploy the MDA file using Docker Buildpack.
-
 **⚠️ Warning** If your pipeline is based on Docker Buildpack V4 or an earlier version, see the [upgrading from Docker Buildpack v4](upgrading-from-v4.md) document. To use Docker Buildpack v5, some changes will be required in your build process.
 
 For a Kubernetes native solution to run Mendix apps, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).

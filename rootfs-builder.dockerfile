@@ -69,7 +69,7 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
+COPY scripts/compilation.py scripts/git scripts/mono-adapter /opt/mendix/buildpack/
 
 # Install the buildpack Python dependencies
 RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
