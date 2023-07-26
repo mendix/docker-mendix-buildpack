@@ -10,7 +10,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # CF buildpack version
-ARG CF_BUILDPACK=v5.0.0
+ARG CF_BUILDPACK=v5.0.4
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
@@ -33,7 +33,7 @@ RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.
     microdnf clean all && rm -rf /var/cache/yum
 
 # Install RHEL alternatives to CF Buildpack dependencies
-RUN microdnf install -y java-11-openjdk-headless java-11-openjdk-devel mono-core-5.20.1.34 libgdiplus0 libicu && \
+RUN microdnf install -y java-11-openjdk-headless java-11-openjdk-devel tzdata-java mono-core-5.20.1.34 libgdiplus0 libicu && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set nginx permissions
@@ -69,7 +69,7 @@ RUN mkdir -p /opt/mendix/buildpack /opt/mendix/build &&\
     chmod -R g=u /opt/mendix
 
 # Copy python scripts which execute the buildpack (exporting the VCAP variables)
-COPY scripts/compilation.py scripts/git /opt/mendix/buildpack/
+COPY scripts/compilation.py scripts/git scripts/mono-adapter /opt/mendix/buildpack/
 
 # Install the buildpack Python dependencies
 RUN PYTHON_BUILD_RPMS="python3.11-pip python3.11-devel libffi-devel gcc" && \
