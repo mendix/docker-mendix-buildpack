@@ -34,14 +34,15 @@ if [ $MX_MAJOR_VERSION -le 7 ]; then
 elif [ $MX_MAJOR_VERSION -eq 8 ]; then
     JAVA_VERSION=11
     DOTNET_VERSION="mono520"
-elif [ $MX_MAJOR_VERSION -eq 9 ] && [ $MX_MINOR_VERSION -lt 16 ]; then
+elif [ $MX_MAJOR_VERSION -eq 9 ] && [ $MX_MINOR_VERSION -lt 21 ]; then
     JAVA_VERSION=11
     DOTNET_VERSION="mono520"
-elif [ $MX_MAJOR_VERSION -eq 9 ] && [ $MX_MINOR_VERSION -ge 16 ]; then
+elif [ $MX_MAJOR_VERSION -eq 9 ] || [ $MX_MAJOR_VERSION -eq 10 ]; then
     JAVA_VERSION=11
     DOTNET_VERSION="dotnet6"
 else
     echo "Unsupported Mendix version: ${MX_MAJOR_VERSION}.${MX_MINOR_VERSION}"
+    exit 1
 fi
 
 echo "Using Java $JAVA_VERSION and .NET $DOTNET_VERSION"

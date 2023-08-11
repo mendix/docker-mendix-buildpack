@@ -20,7 +20,7 @@ RUN if [ $DOTNET_VERSION = "mono520" ]; then \
         cp /etc/pki/rpm-gpg/RPM-GPG-KEY-mono-centos8-stable /mnt/rootfs/etc/pki/rpm-gpg/; \
         cp /etc/yum.repos.d/mono-centos8-stable.repo /mnt/rootfs/etc/yum.repos.d/; \
     elif [ $DOTNET_VERSION = "dotnet6" ]; then \
-        DOTNET_LIBS="dotnet-runtime-6.0 libgdiplus"; \
+        DOTNET_LIBS="libgdiplus libicu"; \
         rm /etc/yum.repos.d/mono-centos8-stable.repo; \
         dnf install --setopt install_weak_deps=false --nodocs --installroot /mnt/rootfs -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm; \
         cp /mnt/rootfs/etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8 /etc/pki/rpm-gpg/; \
@@ -63,7 +63,7 @@ RUN ARCH=$(arch) && \
     elif [ $DOTNET_VERSION = "dotnet6" ] && [ $ARCH = "aarch64" ]; then \
         MXBUILD_DOWNLOAD_PREFIX="arm64-"; \
     elif [ $DOTNET_VERSION = "dotnet6" ] && [ $ARCH = "x86_64" ]; then \
-        MXBUILD_DOWNLOAD_PREFIX="net6-"; \
+        MXBUILD_DOWNLOAD_PREFIX=""; \
     else \
         echo "Unsupported .NET $DOTNET_VERSION or architecture $ARCH"; \
     fi &&\
