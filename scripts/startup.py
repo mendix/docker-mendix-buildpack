@@ -5,6 +5,7 @@ import os
 import re
 import runpy
 import sys
+import pwd
 import base64
 
 logging.basicConfig(
@@ -82,6 +83,9 @@ def check_logfilter():
         logging.warn("LOG_RATELIMIT is set, but the mendix-logfilter binary is missing. Rebuild Docker image with EXCLUDE_LOGFILTER=false to enable log filtering")
         del os.environ['LOG_RATELIMIT']
 
+def emulate_getpwuid():
+    pwd.getpwuid = lambda _: ['mendix', None, os.getuid(), os.getgid(), 'mendix user', '/opt/mendix/build', '/sbin/nologin']
+
 def call_buildpack_startup():
     logging.debug("Executing call_buildpack_startup...")
 
@@ -122,6 +126,7 @@ if __name__ == '__main__':
     export_industrial_edge_config_variable()
     export_k8s_instance()
     check_logfilter()
+    emulate_getpwuid()
     
     export_encoded_cacertificates()
     call_buildpack_startup()

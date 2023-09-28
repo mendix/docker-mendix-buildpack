@@ -53,10 +53,6 @@ ARG USER_UID=1001
 # Set the home path
 ENV HOME=/opt/mendix/build
 
-# Allow the user group to modify /etc/passwd so that OpenShift 3 randomized UIDs are supported by CF Buildpack 
-RUN chmod g=u /etc/passwd &&\
-    chown ${USER_UID}:0 /etc/passwd
-
 # Add the buildpack modules
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.11/site-packages/"
 
