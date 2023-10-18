@@ -10,7 +10,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # CF buildpack version
-ARG CF_BUILDPACK=v5.0.4
+ARG CF_BUILDPACK=v5.0.9
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
