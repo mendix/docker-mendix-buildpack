@@ -1,3 +1,6 @@
+**🚨⚠️🚧 Warning** The `master` branch is a legacy branch intended for backwards compatibility with existing CI/CD pipelines.
+To get the latest supported version, please use the [latest](https://github.com/mendix/docker-mendix-buildpack/tree/latest) branch instead.
+
 # Docker Mendix Buildpack
 
 ![Test status](https://github.com/mendix/docker-mendix-buildpack/workflows/Test/badge.svg)
