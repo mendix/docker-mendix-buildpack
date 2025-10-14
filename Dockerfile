@@ -27,7 +27,7 @@ COPY $BUILD_PATH /opt/mendix/build
 ENV NGINX_CUSTOM_BIN_PATH=/usr/sbin/nginx
 
 # Set the user ID
-ARG USER_UID=1001
+ARG USER_UID=11001
 
 # Copy start scripts
 COPY scripts/startup.py scripts/vcap_application.json /opt/mendix/build/
@@ -69,7 +69,7 @@ ENV HOME=/opt/mendix/build
 ENV PYTHONPATH "/opt/mendix/buildpack/lib/:/opt/mendix/buildpack/:/opt/mendix/buildpack/lib/python3.11/site-packages/"
 
 # Set the user ID
-ARG USER_UID=1001
+ARG USER_UID=11001
 
 USER ${USER_UID}
 
