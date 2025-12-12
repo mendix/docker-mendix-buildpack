@@ -229,6 +229,33 @@ docker run -it \
   mendix/mendix-buildpack:v1.2  
 ```
 
+ Instead of supplying the license id and key directly via environment variables, you could also use the alternative environment variables:
+
+* LICENSE_ID_FILE
+* LICENSE_KEY_FILE
+
+These should point to a file **INSIDE** the container holding the license id / key. 
+This allows the use of [secrets with docker-compose](https://docs.docker.com/reference/compose-file/secrets/).
+
+example:
+
+```yaml
+services:
+  app:
+    image: my-mendix-app:latest
+    secrets:
+      - license-id
+      - license-key
+    environment:
+      - LICENSE_ID_FILE=/run/secrets/license-id
+      - LICENSE_KEY_FILE=/run/secrets/license-key
+secrets:
+  license-id:
+    file: ./license-id.txt
+  license-key:
+    file: ./license-key.txt
+```
+
 ### Passing environment variables to your Mendix runtime
 
 The default values for constants will be used as defined in your project. However, you can override them with environment variables. You need to replace the dot with an underscore and prefix it with MX_. So a constant like Module. Constant with value ABC123 could be set like this:
