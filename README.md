@@ -4,6 +4,8 @@
 
 The Mendix Buildpack for Docker (aka docker-mendix-buildpack) is an **example project** you can use to build and run your Mendix Application in a [Docker](https://www.docker.com/) container.
 
+**🌟 🆕 Important Note** We’re delighted to introduce the [Portable App Distribution](https://docs.mendix.com/developerportal/deploy/docker-deploy-pad/), our recommended replacement for Docker Buildpack. With this new approach, Mendix apps no longer require a Python toolchain and integrate seamlessly with your organization’s Java base images and build processes. It also strengthens your security posture and is now our preferred method for addressing CVE reports.
+
 **⚠️ Warning** If your pipeline is based on Docker Buildpack v5 or an earlier version, see the [upgrading from Docker Buildpack v5](upgrading-from-v5.md) document. To use Docker Buildpack v6, some changes will be required in your build process.
 
 For a Kubernetes native solution to run Mendix apps, see [Mendix for Private Cloud](https://www.mendix.com/evaluation-guide/app-lifecycle/mendix-for-private-cloud/).
