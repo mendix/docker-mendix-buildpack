@@ -43,7 +43,7 @@ After the update, your pipeline might look like this:
 ```shell
 # Preparation steps
 # Downloag Docker Buildpack
-DOCKER_BUILDPACK_VERSION=v6.0.4
+DOCKER_BUILDPACK_VERSION=v6.0.3
 curl -LJ -o - https://github.com/mendix/docker-mendix-buildpack/archive/refs/tags/${DOCKER_BUILDPACK_VERSION}.tar.gz | tar --strip-components=1 -xvz
 # Checkout the Mendix app source
 git clone <mendix-app-git> mendix-app-src
