@@ -1,6 +1,6 @@
 # Dockerfile to create a Mendix Docker image based on either the source code or
 # Mendix Deployment Archive (aka mda file)
-FROM registry.access.redhat.com/ubi9/ubi-minimal:latest
+FROM registry.access.redhat.com/ubi9-minimal:latest
 #This version does a full build originating from the Ubuntu Docker images
 LABEL Author="Mendix Digital Ecosystems"
 LABEL maintainer="digitalecosystems@mendix.com"
@@ -10,7 +10,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # CF buildpack version
-ARG CF_BUILDPACK=v5.0.32
+ARG CF_BUILDPACK=v5.0.33
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
