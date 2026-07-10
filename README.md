@@ -1,7 +1,9 @@
 **🚨⚠️🚧 Warning** The `master` branch is a legacy branch intended for backwards compatibility with existing CI/CD pipelines.
 To get the latest supported version, please use the [latest](https://github.com/mendix/docker-mendix-buildpack/tree/latest) branch instead.
 
-**🌟 🆕 Important Note** We’re delighted to introduce the [Portable App Distribution](https://docs.mendix.com/developerportal/deploy/docker-deploy-pad/), our recommended replacement for Docker Buildpack. With this new approach, Mendix apps no longer require a Python toolchain and integrate seamlessly with your organization’s Java base images and build processes. It also strengthens your security posture and is now our preferred method for addressing CVE reports.
+**🌟 Important Note** We’re delighted to introduce the [Mendix Portable Rutnime](https://docs.mendix.com/developerportal/deploy/docker-deploy-pad/), our recommended replacement for Docker Buildpack. With this new approach, Mendix apps no longer require a Python toolchain and integrate seamlessly with your organization’s Java base images and build processes. It also strengthens your security posture and is now our preferred method for addressing CVE reports.
+
+**Warning** - We strongly encourage customers to begin their journey toward [Mendix Portable Runtime](https://docs.mendix.com/developerportal/deploy/portable-app-distribution-deploy/), as the Docker Buildpack will no longer support Mendix 12 and future Runtime versions, marking the start of its deprecation path. For more information, see the [blog release](https://www.mendix.com/blog/mendix-portable-runtime/) 
 
 # Docker Mendix Buildpack
 
