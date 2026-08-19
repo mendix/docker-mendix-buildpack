@@ -10,7 +10,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # CF buildpack version
-ARG CF_BUILDPACK=v5.0.34
+ARG CF_BUILDPACK=v5.0.35
 # CF buildpack download URL
 ARG CF_BUILDPACK_URL=https://github.com/mendix/cf-mendix-buildpack/releases/download/${CF_BUILDPACK}/cf-mendix-buildpack.zip
 
@@ -20,7 +20,7 @@ ARG BUILDPACK_XTRACE
 # install dependencies & remove package lists
 RUN microdnf update -y && \
     microdnf module enable nginx:1.26 -y && \
-    microdnf install -y wget glibc-langpack-en python311 openssl tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig findutils java-11-openjdk-headless java-17-openjdk-headless java-21-openjdk-headless && \
+    microdnf install -y wget glibc-langpack-en python311 openssl tar gzip unzip libpq nginx nginx-mod-stream binutils fontconfig findutils java-11-openjdk-headless java-17-openjdk-headless java-21-openjdk-headless java-25-openjdk-headless && \
     microdnf remove -y /usr/bin/python && \
     microdnf clean all && rm -rf /var/cache/yum
 
