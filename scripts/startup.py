@@ -22,6 +22,22 @@ def export_db_endpoint():
             'DATABASE_ENDPOINT environment variable not found.'
             'Fallback to custom runtime variables https://github.com/mendix/cf-mendix-buildpack/#configuring-custom-runtime-settings')
             
+def export_license():
+    lic_id_path = os.getenv('LICENSE_ID_FILE')
+    if lic_id_path:
+        try:
+            with open(lic_id_path, 'r', encoding='utf-8') as f:
+                os.environ['LICENSE_ID'] = f.read().strip()
+        except Exception as e:
+            logging.warn(f"Failed to read LICENSE_ID_FILE '{lic_id_path}': {e}")
+
+    lic_key_path = os.getenv('LICENSE_KEY_FILE')
+    if lic_key_path:
+        try:
+            with open(lic_key_path, 'r', encoding='utf-8') as f:
+                os.environ['LICENSE_KEY'] = f.read().strip()
+        except Exception as e:
+            logging.warn(f"Failed to read LICENSE_KEY_FILE '{lic_key_path}': {e}")
 
 def export_vcap_variables():
     logging.debug("Executing build_vcap_variables...")
@@ -121,6 +137,7 @@ if __name__ == '__main__':
     export_vcap_variables()
     export_industrial_edge_config_variable()
     export_k8s_instance()
+    export_license()
     check_logfilter()
     
     export_encoded_cacertificates()
