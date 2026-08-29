@@ -6,14 +6,14 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Set the user ID
-ARG USER_UID=1001
+ARG USER_UID=11001
 ENV USER_UID=${USER_UID}
 
 # Install common prerequisites
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm &&\
     microdnf update -y && \
     microdnf install -y glibc-langpack-en openssl fontconfig tzdata-java libgdiplus libicu tar gzip jq \
-        java-11-openjdk-devel java-17-openjdk-devel java-21-openjdk-devel && \
+    java-11-openjdk-devel java-17-openjdk-devel java-21-openjdk-devel && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Create user (for non-OpenShift clusters)
