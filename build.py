@@ -171,7 +171,7 @@ def build_mpr(source_dir, mpr_file, destination, artifacts_repository=None):
     builder_image = build_mpr_builder(mx_version, dotnet, artifacts_repository)
     model_version = None
     try:
-        model_version = get_git_commit(source_dir)
+        model_version = os.environ['MENDIX_MODEL_VERSION'] if 'MENDIX_MODEL_VERSION' in os.environ else get_git_commit(source_dir)
     except Exception as e:
         model_version = 'unversioned'
         logging.warning('Cannot determine git commit ({}), will set model version to unversioned'.format(e))
