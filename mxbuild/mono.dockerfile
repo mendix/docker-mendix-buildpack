@@ -6,7 +6,7 @@ ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
 
 # Set the user ID
-ARG USER_UID=1001
+ARG USER_UID=11001
 ENV USER_UID=${USER_UID}
 
 # Add mono repo
@@ -17,7 +17,7 @@ COPY --chown=0:0 mono/mono-centos8-stable.repo /etc/yum.repos.d/mono-centos8-sta
 RUN rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm &&\
     microdnf update -y && \
     microdnf install -y glibc-langpack-en openssl fontconfig tzdata-java mono-core-5.20.1.34 libgdiplus0 libicu tar jq \
-        java-11-openjdk-devel java-17-openjdk-devel java-21-openjdk-devel && \
+    java-11-openjdk-devel java-17-openjdk-devel java-21-openjdk-devel && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Download and extract MxBuild

@@ -25,7 +25,7 @@ RUN microdnf update -y && \
     microdnf clean all && rm -rf /var/cache/yum
 
 # Set the user ID
-ARG USER_UID=1001
+ARG USER_UID=11001
 ENV USER_UID=${USER_UID}
 
 # Set nginx permissions
